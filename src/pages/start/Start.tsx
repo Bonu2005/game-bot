@@ -17,7 +17,7 @@ const Start = () => {
         className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-white mb-4 shadow-md cursor-pointer"
         onClick={() => {
           window.open(
-            "https://t.me/share/url?url=https://game-bot-gules.vercel.app/&text=Check out this cool game!",
+            "https://t.me/WordEngUz_bot?game=english&text=Check out this cool game!",
             "_blank"
           );
 
