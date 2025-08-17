@@ -16,7 +16,11 @@ const Start = () => {
       <div
         className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-white mb-4 shadow-md cursor-pointer"
         onClick={() => {
-          window.open("https://game-bot-gules.vercel.app/", "_blank");
+          window.open(
+            "https://t.me/share/url?url=https://game-bot-gules.vercel.app/&text=Check out this cool game!",
+            "_blank"
+          );
+
         }}
       >
         <img src={shareplay} alt="Invite" className="w-5 h-5 mr-2" />
