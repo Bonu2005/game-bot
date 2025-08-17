@@ -4,6 +4,7 @@ import pre_inter from "../../assets/imgs/pre-inter.svg";
 import inter from "../../assets/imgs/inter.svg";
 import upper from "../../assets/imgs/upper.svg";
 import advanced from "../../assets/imgs/advenced.svg";
+import { Link } from "react-router-dom";
 
 const levels = [
   { icon: beginner, label: "Beginner" },
@@ -28,11 +29,14 @@ const ChooseLevel = () => {
             className="relative w-[140px] h-[140px] rounded-2xl overflow-hidden"
           >
             {/* Картинка полностью */}
-            <img
+            <Link  to={"/game"}>
+                  <img
               src={level.icon}
               alt={level.label}
               className="w-full h-full object-cover"
             />
+            </Link>
+      
 
             {/* Надпись НА изображении, позиционирована в нижнюю часть */}
             <div className="absolute bottom-[10px] w-full text-center">
