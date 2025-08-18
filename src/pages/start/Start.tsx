@@ -44,9 +44,10 @@ const Start = () => {
   };
 
   return (
+    
     <div className="flex flex-col items-center justify-center px-6">
       {/* Заголовок */}
-      <h1 className="text-white font-bold text-[24px] mb-6">Word Quiz</h1>
+      <h1 className="text-white font-bold text-[24px] mb-6">Word Quiz  {username}</h1>
 
       {/* Основное изображение */}
       <img src={image3} alt="Quiz" className="w-[220px] h-auto mb-10" />
@@ -66,11 +67,11 @@ const Start = () => {
       </div>
 
       {/* Кнопка Play */}
-      <Link to={"/chooseLevel"}>
+      <Link to={"/chooseLevel" } className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-[#FFA500] shadow-md">
             <button
         onClick={handleStart}
         disabled={loading}
-        className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-[#FFA500] shadow-md"
+
       >
         <img src={play} alt="Play" className="w-6 h-6 mr-2" />
         <p className="text-white text-[16px] font-semibold">
