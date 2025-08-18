@@ -1,34 +1,126 @@
- 
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Game = () => {
-const answers = ["exhausted", "happy", "apple", "sad"];
+  const [wordId, setWordId] = useState<number | null>(null); // id текущего слова
+  const [word, setWord] = useState<string | null>(null); // само слово
+  const [options, setOptions] = useState<string[]>([]); // варианты ответов
+  const [timeLeft, setTimeLeft] = useState(50); // время
+  const [loading, setLoading] = useState(true);
+  const [disabled, setDisabled] = useState(false); // блокировка кнопок после ответа
+
+  const navigate = useNavigate();
+  const sessionId = localStorage.getItem("session_id");
+
+  // Загружаем следующее слово
+  const fetchNextWord = async () => {
+    try {
+      setLoading(true);
+      const res = await axios.get("http://localhost:3000/game/next-word", {
+        params: { session_id: sessionId },
+      });
+
+      if (
+        res.data.message === "Game ended by timer" ||
+        res.data.message === "No more words available"
+      ) {
+        navigate("/result");
+        return;
+      }
+
+      setWordId(res.data.word_id); // ✅ сохраняем id
+      setWord(res.data.word_en); // ✅ само слово
+      setOptions(res.data.options);
+      setTimeLeft(res.data.time_left || 50);
+    } catch (err) {
+      console.error("Ошибка при получении слова:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Отправляем ответ
+  const handleAnswer = async (answer: string) => {
+    try {
+      setDisabled(true);
+      await axios.post("http://localhost:3000/game/submit-answer", {
+        session_id: sessionId,
+        word_id: wordId, // ✅ правильный id
+        answer,
+      });
+      await fetchNextWord();
+    } catch (err) {
+      console.error("Ошибка при отправке ответа:", err);
+    } finally {
+      setDisabled(false);
+    }
+  };
+
+  // Таймер обратного отсчёта
+  useEffect(() => {
+    let timer: any;
+    if (timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft((prev) => prev - 1);
+      }, 1000);
+    } else {
+      navigate("/result");
+    }
+    return () => clearInterval(timer);
+  }, [timeLeft, navigate]);
+
+  // При старте грузим первое слово
+  useEffect(() => {
+    fetchNextWord();
+  }, []);
+
+  if (loading) {
+    return <div className="text-white text-center py-20">Loading...</div>;
+  }
 
   return (
     <div className=" text-white px-6 py-10 flex flex-col items-center">
       {/* ВЕРХ */}
       <div className="w-full flex justify-between items-center mb-4">
-        <button className="text-blue-400 font-semibold">Back</button>
+        <button
+          className="text-blue-400 font-semibold"
+          onClick={() => navigate(-1)}
+        >
+          Back
+        </button>
         <p className="text-white font-bold">Quiz</p>
         <div className="w-[60px] h-[24px] bg-[#1E2A3A] rounded-full flex items-center justify-center text-[12px]">
-          50 s
+          {timeLeft}s
         </div>
       </div>
 
-      {/* ТАЙМЕР */}
+      {/* ТАЙМЕР (progress bar) */}
       <div className="w-full h-[6px] bg-gray-600 rounded-full mb-6">
-        <div className="h-full w-[40%] bg-orange-400 rounded-full"></div>
+        <div
+          className="h-full bg-orange-400 rounded-full"
+          style={{ width: `${(timeLeft / 50) * 100}%` }} // ✅ фикс синтаксиса
+        ></div>
       </div>
 
       {/* ВОПРОС */}
-      <p className="text-[16px] mb-2 text-center">Find the English translations of the given words.</p>
-      <h2 className="text-[24px] font-bold mb-6 text-center">charchagan</h2>
+      <p className="text-[16px] mb-2 text-center">
+        Find the English translation of the given word:
+      </p>
+      <h2 className="text-[24px] font-bold mb-6 text-center">{word}</h2>
 
       {/* ВАРИАНТЫ ОТВЕТОВ */}
       <div className="w-full space-y-4">
-        {answers.map((ans, index) => (
+        {options.map((ans, index) => (
           <button
             key={index}
-            className="w-full py-4 bg-[#2C3A4D] rounded-xl text-white text-[16px] font-semibold"
+            disabled={disabled}
+            onClick={() => handleAnswer(ans)}
+            className={`w-full py-4 rounded-xl text-white text-[16px] font-semibold transition ${
+              disabled
+                ? "bg-gray-500 cursor-not-allowed"
+                : "bg-[#2C3A4D] hover:bg-[#36495f]"
+            }`}
           >
             {ans}
           </button>
@@ -36,6 +128,6 @@ const answers = ["exhausted", "happy", "apple", "sad"];
       </div>
     </div>
   );
-}
+};
 
-export default Game
+export default Game;

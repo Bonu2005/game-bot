@@ -1,10 +1,12 @@
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 import beginner from "../../assets/imgs/beginner.svg";
 import elementary from "../../assets/imgs/elementary.svg";
 import pre_inter from "../../assets/imgs/pre-inter.svg";
 import inter from "../../assets/imgs/inter.svg";
 import upper from "../../assets/imgs/upper.svg";
 import advanced from "../../assets/imgs/advenced.svg";
-import { Link } from "react-router-dom";
 
 const levels = [
   { icon: beginner, label: "Beginner" },
@@ -16,8 +18,32 @@ const levels = [
 ];
 
 const ChooseLevel = () => {
+  const navigate = useNavigate();
+
+  const handleChoose = async (level: string) => {
+    try {
+      const sessionId = localStorage.getItem("session_id");
+      if (!sessionId) {
+        console.error("Нет session_id — начни игру сначала");
+        navigate("/");
+        return;
+      }
+
+      // Отправляем выбранный уровень на backend
+      await axios.post("http://localhost:3000/game/choose-level", {
+        session_id: sessionId,
+        level: level,
+      });
+
+      // После успешного сохранения -> на страницу игры
+      navigate("/game");
+    } catch (err) {
+      console.error("Ошибка при выборе уровня:", err);
+    }
+  };
+
   return (
-    <div className=" flex flex-col items-center py-10 px-6">
+    <div className="flex flex-col items-center py-10 px-6">
       {/* Заголовок */}
       <h1 className="text-white font-bold text-[24px] mb-8">Choose your level</h1>
 
@@ -26,19 +52,16 @@ const ChooseLevel = () => {
         {levels.map((level, index) => (
           <div
             key={index}
-            className="relative w-[140px] h-[140px] rounded-2xl overflow-hidden"
+            className="relative w-[140px] h-[140px] rounded-2xl overflow-hidden cursor-pointer"
+            onClick={() => handleChoose(level.label)} // <-- вот тут мы сохраняем
           >
-            {/* Картинка полностью */}
-            <Link  to={"/game"}>
-                  <img
+            <img
               src={level.icon}
               alt={level.label}
               className="w-full h-full object-cover"
             />
-            </Link>
-      
 
-            {/* Надпись НА изображении, позиционирована в нижнюю часть */}
+            {/* Надпись НА изображении */}
             <div className="absolute bottom-[10px] w-full text-center">
               <p className="text-white text-[14px] font-semibold">{level.label}</p>
             </div>
