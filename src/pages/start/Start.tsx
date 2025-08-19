@@ -1,56 +1,13 @@
-import { useEffect, useState } from "react";
 import image3 from "../../assets/imgs/image 3.svg";
 import shareplay from "../../assets/imgs/shareplay.svg";
 import play from "../../assets/imgs/play.circle.fill.svg";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link } from "react-router-dom";
 
 const Start = () => {
-  const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
-  const [telegramId, setTelegramId] = useState("");
-  const [username, setUsername] = useState("");
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get("telegram_id");
-    const name = params.get("username");
-    console.log(id,name);
-    
-   
-    
-    if (id) setTelegramId(id);
-    if (name) setUsername(name);
-  }, []);
-
-  const handleStart = async () => {
-    try {
-      setLoading(true);
-
-  
-      const res = await axios.post("http://localhost:3000/game/start", {
-        telegramId,
-        username,
-        level: null, 
-      });
-
-      // сохраняем session_id
-      localStorage.setItem("session_id", res.data.session_id);
-
-      // переход к выбору уровня
-      navigate("/chooseLevel");
-    } catch (err) {
-      console.error("Ошибка при старте игры:", err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
-    
     <div className="flex flex-col items-center justify-center px-6">
       {/* Заголовок */}
-      <h1 className="text-white font-bold text-[24px] mb-6">Word Quiz  {username}</h1>
+      <h1 className="text-white font-bold text-[24px] mb-6">Word Quiz</h1>
 
       {/* Основное изображение */}
       <img src={image3} alt="Quiz" className="w-[220px] h-auto mb-10" />
@@ -70,18 +27,13 @@ const Start = () => {
       </div>
 
       {/* Кнопка Play */}
-      <Link to={"/chooseLevel" } className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-[#FFA500] shadow-md">
-            <button
-        onClick={handleStart}
-        disabled={loading}
-
+      <Link
+        to={"/chooseLevel"}
+        className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-[#FFA500] shadow-md"
       >
         <img src={play} alt="Play" className="w-6 h-6 mr-2" />
-        <p className="text-white text-[16px] font-semibold">
-          {loading ? "Starting..." : "Play"}
-        </p>
-      </button></Link>
-
+        <p className="text-white text-[16px] font-semibold">Play</p>
+      </Link>
     </div>
   );
 };
