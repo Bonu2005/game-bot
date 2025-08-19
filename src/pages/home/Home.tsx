@@ -6,7 +6,7 @@ import { useEffect } from "react";
 const Home = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
-    const id = params.get("user_id");
+    const id = params.get("telegramId");
     const name = params.get("username");
 
     console.log("👉 Параметры из URL (Home):", { id, name });
