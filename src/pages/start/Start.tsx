@@ -7,7 +7,6 @@ import shareplay from "../../assets/imgs/shareplay.svg";
 import play from "../../assets/imgs/play.circle.fill.svg";
 
 const Start = () => {
-
   return (
     <div className="flex flex-col items-center justify-center px-6">
       <h1 className="text-white font-bold text-[24px] mb-6">Word Quiz</h1>
@@ -27,15 +26,12 @@ const Start = () => {
         <p className="text-black text-[16px] font-medium">Invite friends</p>
       </div>
 <Link to={"/chooseLevel"}  className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-[#FFA500] shadow-md"> 
-   <button
-      
-       
-      >
+ 
         <img src={play} alt="Play" className="w-6 h-6 mr-2" />
         <p className="text-white text-[16px] font-semibold">
           {  "Play"}
         </p>
-      </button>
+    
 </Link>
    
     </div>
