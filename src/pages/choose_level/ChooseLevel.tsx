@@ -30,7 +30,6 @@ const ChooseLevel = () => {
         navigate("/");
         return;
       }
-
       // Вызываем API
       await axios.post(
         `http://3.76.216.99:3000/game/choose-level?session_id=${sessionId}`,
@@ -48,7 +47,7 @@ const ChooseLevel = () => {
 
   return (
     <div className="flex flex-col items-center py-10 px-6">
-      <h1 className="text-white font-bold text-[24px] mb-8">Choosee your level</h1>
+      <h1 className="text-white font-bold text-[24px] mb-8">Choose your level {sessionId}</h1>
       <div className="grid grid-cols-2 gap-x-5 gap-y-6">
         {levels?.map((level) => (
           <div
