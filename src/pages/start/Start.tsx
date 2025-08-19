@@ -23,7 +23,7 @@ const Start = () => {
         }
       >
         <img src={shareplay} alt="Invite" className="w-5 h-5 mr-2" />
-        <p className="text-black text-[16px] font-medium">Invite friends</p>
+        <p className="text-black text-[16px] font-medium">Invite friendss</p>
       </div>
 <Link to={"/chooseLevel"}  className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-[#FFA500] shadow-md"> 
  
