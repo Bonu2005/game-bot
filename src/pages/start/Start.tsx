@@ -4,40 +4,73 @@ import shareplay from "../../assets/imgs/shareplay.svg";
 import play from "../../assets/imgs/play.circle.fill.svg";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+// Создаём типы для Telegram WebApp
+interface TelegramUser {
+  id: number;
+  is_bot?: boolean;
+  first_name?: string;
+  last_name?: string;
+  username?: string;
+  language_code?: string;
+}
+
+interface TelegramWebAppInitDataUnsafe {
+  query_id?: string;
+  user?: TelegramUser;
+  receiver?: TelegramUser;
+  chat?: any;
+}
+
+interface TelegramWebApp {
+  initData?: string;
+  initDataUnsafe: TelegramWebAppInitDataUnsafe;
+  ready: () => void;
+  // добавь другие методы при необходимости
+}
+
+// Расширяем window
+declare global {
+  interface Window {
+    Telegram: {
+      WebApp: TelegramWebApp;
+    };
+  }
+}
 
 const Start = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const handleStart = async () => {
-    try {
-      setLoading(true);
-      const telegramId = localStorage.getItem("telegramId");
-      const username = localStorage.getItem("username");
+  try {
+    setLoading(true);
 
-      if (!telegramId || !username) {
-        alert("Ошибка: нет данных пользователя");
-        return;
-      }
+    const tg = window.Telegram.WebApp;
+    const telegramId = tg.initDataUnsafe.user?.id;
+    const username = tg.initDataUnsafe.user?.username;
 
-    
-      const res = await axios.post("http://3.76.216.99:3000/game/start", {
-        telegramId:"123456",
-        username :"Bonu",
-        level: null,
-      });
-
- 
-      localStorage.setItem("session_id", res.data.session_id);
-
-      navigate("/chooseLevel");
-    } catch (err) {
-      console.error("Ошибка при старте игры:", err);
-      alert("Не удалось начать игру");
-    } finally {
-      setLoading(false);
+    if (!telegramId || !username) {
+      alert("Ошибка: нет данных пользователя из Telegram");
+      return;
     }
-  };
+
+    const res = await axios.post("http://3.76.216.99:3000/game/start", {
+      telegramId,
+      username,
+      level: null,
+    });
+
+    // Если хочешь, можно сохранять в sessionStorage для текущей сессии
+    sessionStorage.setItem("session_id", res.data.session_id);
+
+    navigate("/chooseLevel");
+  } catch (err) {
+    console.error("Ошибка при старте игры:", err);
+    alert("Не удалось начать игру");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="flex flex-col items-center justify-center px-6">
