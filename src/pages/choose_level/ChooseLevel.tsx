@@ -17,8 +17,6 @@ const levels = [
   { id: 6, icon: advanced, label: "Advanced" },
 ];
 
-
-
 const ChooseLevel = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,11 +31,16 @@ const ChooseLevel = () => {
         return;
       }
 
-      await axios.post(`http://3.76.216.99:3000/game/choose-level?session_id=${sessionId}`, {
-        level: levelId, 
-      });
+      // Вызываем API
+      await axios.post(
+        `http://3.76.216.99:3000/game/choose-level?session_id=${sessionId}`,
+        { level: levelId }
+      );
 
-      navigate("/game");
+      // Передаём sessionId и выбранный levelId в Game
+      navigate("/game", {
+        state: { sessionId, levelId },
+      });
     } catch (err) {
       console.error("Ошибка при выборе уровня:", err);
     }
@@ -51,11 +54,17 @@ const ChooseLevel = () => {
           <div
             key={level.id}
             className="relative w-[140px] h-[140px] rounded-2xl overflow-hidden cursor-pointer"
-            onClick={() => handleChoose(level.id)} // используем число
+            onClick={() => handleChoose(level.id)}
           >
-            <img src={level.icon} alt={level.label} className="w-full h-full object-cover" />
+            <img
+              src={level.icon}
+              alt={level.label}
+              className="w-full h-full object-cover"
+            />
             <div className="absolute bottom-[10px] w-full text-center">
-              <p className="text-white text-[14px] font-semibold">{level.label}</p>
+              <p className="text-white text-[14px] font-semibold">
+                {level.label}
+              </p>
             </div>
           </div>
         ))}
@@ -63,6 +72,5 @@ const ChooseLevel = () => {
     </div>
   );
 };
-
 
 export default ChooseLevel;
