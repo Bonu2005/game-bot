@@ -1,12 +1,19 @@
 import logo from "../../assets/imgs/Logo Example.svg";
 import loader from "../../assets/imgs/loader.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const Home = () => {
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const sessionId = params.get("session_id"); // берём session_id из URL
+
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="mb-[140px]">
-        <Link to={"/start"}>
+        <Link 
+          to="/start" 
+          state={{ sessionId }} // передаём его в Start
+        >
           <img src={logo} alt="logo" />
         </Link>
       </div>

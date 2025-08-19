@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import beginner from "../../assets/imgs/beginner.svg";
@@ -19,23 +19,23 @@ const levels = [
 
 const ChooseLevel = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const state = location.state as { sessionId?: string };
+  const sessionId = state?.sessionId;
 
   const handleChoose = async (level: string) => {
     try {
-      const sessionId = localStorage.getItem("session_id");
       if (!sessionId) {
         console.error("Нет session_id — начни игру сначала");
         navigate("/");
         return;
       }
 
-      // Отправляем выбранный уровень на backend
       await axios.post("http://3.76.216.99:3000/game/choose-level", {
         session_id: sessionId,
-        level: level,
+        level,
       });
 
-      // После успешного сохранения -> на страницу игры
       navigate("/game");
     } catch (err) {
       console.error("Ошибка при выборе уровня:", err);
@@ -44,24 +44,15 @@ const ChooseLevel = () => {
 
   return (
     <div className="flex flex-col items-center py-10 px-6">
-      {/* Заголовок */}
       <h1 className="text-white font-bold text-[24px] mb-8">Choose your level</h1>
-
-      {/* Сетка уровней */}
       <div className="grid grid-cols-2 gap-x-5 gap-y-6">
         {levels.map((level, index) => (
           <div
             key={index}
             className="relative w-[140px] h-[140px] rounded-2xl overflow-hidden cursor-pointer"
-            onClick={() => handleChoose(level.label)} // <-- вот тут мы сохраняем
+            onClick={() => handleChoose(level.label)}
           >
-            <img
-              src={level.icon}
-              alt={level.label}
-              className="w-full h-full object-cover"
-            />
-
-            {/* Надпись НА изображении */}
+            <img src={level.icon} alt={level.label} className="w-full h-full object-cover" />
             <div className="absolute bottom-[10px] w-full text-center">
               <p className="text-white text-[14px] font-semibold">{level.label}</p>
             </div>
