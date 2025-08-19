@@ -30,7 +30,7 @@ const ChooseLevel = () => {
       }
 
       // Отправляем выбранный уровень на backend
-      await axios.post("http://localhost:3000/game/choose-level", {
+      await axios.post("http://3.76.216.99:3000/game/choose-level", {
         session_id: sessionId,
         level: level,
       });

@@ -3,17 +3,16 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Game = () => {
-  const [wordId, setWordId] = useState<number | null>(null); // id текущего слова
-  const [word, setWord] = useState<string | null>(null); // само слово
-  const [options, setOptions] = useState<string[]>([]); // варианты ответов
-  const [timeLeft, setTimeLeft] = useState(50); // время
+  const [wordId, setWordId] = useState<number | null>(null); 
+  const [word, setWord] = useState<string | null>(null);
+  const [options, setOptions] = useState<string[]>([]); 
+  const [timeLeft, setTimeLeft] = useState(50); 
   const [loading, setLoading] = useState(true);
-  const [disabled, setDisabled] = useState(false); // блокировка кнопок после ответа
+  const [disabled, setDisabled] = useState(false); 
 
   const navigate = useNavigate();
   const sessionId = localStorage.getItem("session_id");
 
-  // Загружаем следующее слово
   const fetchNextWord = async () => {
     try {
       setLoading(true);
@@ -29,8 +28,8 @@ const Game = () => {
         return;
       }
 
-      setWordId(res.data.word_id); // ✅ сохраняем id
-      setWord(res.data.word_en); // ✅ само слово
+      setWordId(res.data.word_id); 
+      setWord(res.data.word_en); 
       setOptions(res.data.options);
       setTimeLeft(res.data.time_left || 50);
     } catch (err) {
@@ -40,13 +39,13 @@ const Game = () => {
     }
   };
 
-  // Отправляем ответ
+
   const handleAnswer = async (answer: string) => {
     try {
       setDisabled(true);
-      await axios.post("http://localhost:3000/game/submit-answer", {
+      await axios.post("http://3.76.216.99:3000/game/submit-answer", {
         session_id: sessionId,
-        word_id: wordId, // ✅ правильный id
+        word_id: wordId, 
         answer,
       });
       await fetchNextWord();
@@ -57,7 +56,7 @@ const Game = () => {
     }
   };
 
-  // Таймер обратного отсчёта
+
   useEffect(() => {
     let timer: any;
     if (timeLeft > 0) {
@@ -70,7 +69,7 @@ const Game = () => {
     return () => clearInterval(timer);
   }, [timeLeft, navigate]);
 
-  // При старте грузим первое слово
+
   useEffect(() => {
     fetchNextWord();
   }, []);
@@ -99,17 +98,16 @@ const Game = () => {
       <div className="w-full h-[6px] bg-gray-600 rounded-full mb-6">
         <div
           className="h-full bg-orange-400 rounded-full"
-          style={{ width: `${(timeLeft / 50) * 100}%` }} // ✅ фикс синтаксиса
+          style={{ width: `${(timeLeft / 50) * 100}%` }} 
         ></div>
       </div>
 
-      {/* ВОПРОС */}
       <p className="text-[16px] mb-2 text-center">
         Find the English translation of the given word:
       </p>
       <h2 className="text-[24px] font-bold mb-6 text-center">{word}</h2>
 
-      {/* ВАРИАНТЫ ОТВЕТОВ */}
+      
       <div className="w-full space-y-4">
         {options.map((ans, index) => (
           <button

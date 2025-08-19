@@ -21,9 +21,9 @@ const Start = () => {
       }
 
     
-      const res = await axios.post("http://localhost:3000/game/start", {
-        telegramId,
-        username,
+      const res = await axios.post("http://3.76.216.99:3000/game/start", {
+        telegramId:"123456",
+        username :"Bonu",
         level: null,
       });
 
