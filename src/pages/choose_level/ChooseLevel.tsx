@@ -50,7 +50,7 @@ const ChooseLevel = () => {
     <div className="flex flex-col items-center py-10 px-6">
       <h1 className="text-white font-bold text-[24px] mb-8">Choosee your level</h1>
       <div className="grid grid-cols-2 gap-x-5 gap-y-6">
-        {levels.map((level) => (
+        {levels?.map((level) => (
           <div
             key={level.id}
             className="relative w-[140px] h-[140px] rounded-2xl overflow-hidden cursor-pointer"
