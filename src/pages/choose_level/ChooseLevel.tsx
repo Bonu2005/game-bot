@@ -9,13 +9,15 @@ import upper from "../../assets/imgs/upper.svg";
 import advanced from "../../assets/imgs/advenced.svg";
 
 const levels = [
-  { icon: beginner, label: "Beginner" },
-  { icon: elementary, label: "Elementary" },
-  { icon: pre_inter, label: "Pre-intermediate" },
-  { icon: inter, label: "Intermediate" },
-  { icon: upper, label: "Upper Intermediate" },
-  { icon: advanced, label: "Advanced" },
+  { id: 1, icon: beginner, label: "Beginner" },
+  { id: 2, icon: elementary, label: "Elementary" },
+  { id: 3, icon: pre_inter, label: "Pre-intermediate" },
+  { id: 4, icon: inter, label: "Intermediate" },
+  { id: 5, icon: upper, label: "Upper Intermediate" },
+  { id: 6, icon: advanced, label: "Advanced" },
 ];
+
+
 
 const ChooseLevel = () => {
   const navigate = useNavigate();
@@ -23,7 +25,7 @@ const ChooseLevel = () => {
   const state = location.state as { sessionId?: string };
   const sessionId = state?.sessionId;
 
-  const handleChoose = async (level: string) => {
+  const handleChoose = async (levelId: number) => {
     try {
       if (!sessionId) {
         console.error("Нет session_id — начни игру сначала");
@@ -31,9 +33,8 @@ const ChooseLevel = () => {
         return;
       }
 
-      await axios.post("http://3.76.216.99:3000/game/choose-level", {
-        session_id: sessionId,
-        level,
+      await axios.post(`http://3.76.216.99:3000/game/choose-level?session_id=${sessionId}`, {
+        level: levelId, 
       });
 
       navigate("/game");
@@ -46,11 +47,11 @@ const ChooseLevel = () => {
     <div className="flex flex-col items-center py-10 px-6">
       <h1 className="text-white font-bold text-[24px] mb-8">Choose your level</h1>
       <div className="grid grid-cols-2 gap-x-5 gap-y-6">
-        {levels.map((level, index) => (
+        {levels.map((level) => (
           <div
-            key={index}
+            key={level.id}
             className="relative w-[140px] h-[140px] rounded-2xl overflow-hidden cursor-pointer"
-            onClick={() => handleChoose(level.label)}
+            onClick={() => handleChoose(level.id)} // используем число
           >
             <img src={level.icon} alt={level.label} className="w-full h-full object-cover" />
             <div className="absolute bottom-[10px] w-full text-center">
@@ -62,5 +63,6 @@ const ChooseLevel = () => {
     </div>
   );
 };
+
 
 export default ChooseLevel;
