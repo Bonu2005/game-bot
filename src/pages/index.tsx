@@ -6,7 +6,7 @@ const ChooseLevel = lazy(() => import("./choose_level/ChooseLevel"));
 const Game = lazy(() => import("./game/Game"));
 const Home = lazy(() => import("./home/Home"));
 const Statistic = lazy(() => import("./statistics/Statistic"));
-const Start = lazy(()=>import("./start/Start"))
+const Start = lazy(() => import("./start/Start"))
 const MainRouter = () => {
   return useRoutes([
     {
@@ -14,23 +14,23 @@ const MainRouter = () => {
       element: <MainLayout />,
       children: [
         {
-          path: "/",
+          index: true,
           element: <Home />,
         },
         {
-          path: "/start",
+          path: "start",
           element: <Start />,
         },
         {
-          path: "/chooseLevel",
+          path: "chooseLevel",
           element: <ChooseLevel />,
         },
         {
-          path: "/game",
+          path: "game",
           element: <Game />,
         },
         {
-          path: "/statistic",
+          path: "statistic",
           element: <Statistic />,
         },
       ],
