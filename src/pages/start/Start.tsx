@@ -7,7 +7,6 @@ import shareplay from "../../assets/imgs/shareplay.svg";
 import play from "../../assets/imgs/play.circle.fill.svg";
 
 const Start = () => {
-  
 
   return (
     <div className="flex flex-col items-center justify-center px-6">
