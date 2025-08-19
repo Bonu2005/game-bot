@@ -15,7 +15,10 @@ const Start = () => {
     const params = new URLSearchParams(window.location.search);
     const id = params.get("telegram_id");
     const name = params.get("username");
-
+    console.log(id,name);
+    
+   
+    
     if (id) setTelegramId(id);
     if (name) setUsername(name);
   }, []);
@@ -28,7 +31,7 @@ const Start = () => {
       const res = await axios.post("http://localhost:3000/game/start", {
         telegramId,
         username,
-        level: null, // level пока null, выберешь потом
+        level: null, 
       });
 
       // сохраняем session_id
