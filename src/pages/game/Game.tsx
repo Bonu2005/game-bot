@@ -43,7 +43,7 @@ const Game = () => {
   const handleAnswer = async (answer: string) => {
     try {
       setDisabled(true);
-      await axios.post("http://3.76.216.99:3000/game/submit-answer", {
+      await axios.post("https://telsot.uz.game/submit-answer", {
         session_id: sessionId,
         word_id: wordId, 
         answer,
@@ -64,7 +64,7 @@ const Game = () => {
         setTimeLeft((prev) => prev - 1);
       }, 1000);
     } else {
-      navigate("/result");
+      navigate("/statistic");
     }
     return () => clearInterval(timer);
   }, [timeLeft, navigate]);

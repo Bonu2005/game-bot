@@ -25,11 +25,11 @@ const ChooseLevel = () => {
 
   const handleChoose = async (levelId: number) => {
     try {
-      if (!sessionId) {
-        console.error("Нет session_id — начни игру сначала");
-        navigate("/");
-        return;
-      }
+      // if (!sessionId) {
+      //   console.error("Нет session_id — начни игру сначала");
+      //   navigate("/");
+      //   return;
+      // }
       console.log(levelId);
 
       await axios.post(
