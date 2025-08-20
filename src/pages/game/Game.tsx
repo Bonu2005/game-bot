@@ -1,17 +1,24 @@
 import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 const Game = () => {
-  const [wordId, setWordId] = useState<number | null>(null); 
-  const [word, setWord] = useState<string | null>(null);
-  const [options, setOptions] = useState<string[]>([]); 
-  const [timeLeft, setTimeLeft] = useState(50); 
-  const [loading, setLoading] = useState(true);
-  const [disabled, setDisabled] = useState(false); 
-
   const navigate = useNavigate();
-  const sessionId = localStorage.getItem("session_id");
+  const location = useLocation();
+  const state = location.state as { sessionId: string; levelId: number };
+  const { sessionId } = state || {};
+
+  const [wordId, setWordId] = useState<number | null>(null);
+  const [word, setWord] = useState<string | null>(null);
+  const [options, setOptions] = useState<string[]>([]);
+  const [timeLeft, setTimeLeft] = useState(50);
+  const [loading, setLoading] = useState(true);
+  const [disabled, setDisabled] = useState(false);
+
+  if (!sessionId) {
+    navigate("/"); // если sessionId нет, возвращаем на главную
+    return null;
+  }
 
   const fetchNextWord = async () => {
     try {
@@ -24,12 +31,12 @@ const Game = () => {
         res.data.message === "Game ended by timer" ||
         res.data.message === "No more words available"
       ) {
-        navigate("/result");
+        navigate("/statistic");
         return;
       }
 
-      setWordId(res.data.word_id); 
-      setWord(res.data.word_en); 
+      setWordId(res.data.word_id);
+      setWord(res.data.word_en);
       setOptions(res.data.options);
       setTimeLeft(res.data.time_left || 50);
     } catch (err) {
@@ -39,13 +46,12 @@ const Game = () => {
     }
   };
 
-
   const handleAnswer = async (answer: string) => {
     try {
       setDisabled(true);
-      await axios.post("https://telsot.uz.game/submit-answer", {
+      await axios.post("https://telsot.uz/game/submit-answer", {
         session_id: sessionId,
-        word_id: wordId, 
+        word_id: wordId,
         answer,
       });
       await fetchNextWord();
@@ -56,19 +62,15 @@ const Game = () => {
     }
   };
 
-
   useEffect(() => {
     let timer: any;
     if (timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
+      timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
     } else {
       navigate("/statistic");
     }
     return () => clearInterval(timer);
   }, [timeLeft, navigate]);
-
 
   useEffect(() => {
     fetchNextWord();
@@ -79,8 +81,8 @@ const Game = () => {
   }
 
   return (
-    <div className=" text-white px-6 py-10 flex flex-col items-center">
-      {/* ВЕРХ */}
+    <div className="text-white px-6 py-10 flex flex-col items-center">
+      {/* Header */}
       <div className="w-full flex justify-between items-center mb-4">
         <button
           className="text-blue-400 font-semibold"
@@ -94,11 +96,11 @@ const Game = () => {
         </div>
       </div>
 
-      {/* ТАЙМЕР (progress bar) */}
+      {/* Timer bar */}
       <div className="w-full h-[6px] bg-gray-600 rounded-full mb-6">
         <div
           className="h-full bg-orange-400 rounded-full"
-          style={{ width: `${(timeLeft / 50) * 100}%` }} 
+          style={{ width: `${(timeLeft / 50) * 100}%` }}
         ></div>
       </div>
 
@@ -107,7 +109,6 @@ const Game = () => {
       </p>
       <h2 className="text-[24px] font-bold mb-6 text-center">{word}</h2>
 
-      
       <div className="w-full space-y-4">
         {options.map((ans, index) => (
           <button
