@@ -35,7 +35,7 @@ const ChooseLevel = () => {
         state: { sessionId, levelId },
       });
       await axios.post(
-        `http://3.76.216.99:3000/game/choose-level?session_id=${sessionId}`,
+        `https://telsot.uz/game/choose-level?session_id=${sessionId}`,
         { level: levelId }
       );
 

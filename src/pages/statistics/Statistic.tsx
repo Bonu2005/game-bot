@@ -9,7 +9,7 @@ const Statistic = () => {
   useEffect(() => {
     const fetchLeaderboard = async () => {
       try {
-        const res = await axios.get("http://3.76.216.99:3000/game/leaderboard");
+        const res = await axios.get("https://telsot.uz/game/leaderboard");
         setPlayers(res.data.players); // backend должен вернуть { players: [...] }
       } catch (err) {
         console.error("Ошибка загрузки статистики:", err);

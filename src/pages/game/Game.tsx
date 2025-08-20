@@ -16,7 +16,7 @@ const Game = () => {
   const fetchNextWord = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:3000/game/next-word", {
+      const res = await axios.get("https://telsot.uz/game/next-word", {
         params: { session_id: sessionId },
       });
 
