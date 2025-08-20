@@ -47,7 +47,7 @@ const Statistic = () => {
 
       {/* Player list */}
       <div className="space-y-3">
-        {players.map((p, i) => (
+        {players?.map((p, i) => (
           <div
             key={i}
             className={`w-[344px] mx-auto flex items-center justify-between px-4 py-3 rounded-xl ${
