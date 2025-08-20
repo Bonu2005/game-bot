@@ -11,14 +11,15 @@ const Game = () => {
   const [wordId, setWordId] = useState<number | null>(null);
   const [word, setWord] = useState<string | null>(null);
   const [options, setOptions] = useState<string[]>([]);
+  const [correctAnswer, setCorrectAnswer] = useState<string | null>(null);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [timeLeft, setTimeLeft] = useState(50);
   const [loading, setLoading] = useState(true);
   const [disabled, setDisabled] = useState(false);
-  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [correctAnswer, setCorrectAnswer] = useState<string | null>(null);
 
   if (!sessionId) {
-    navigate("/");
+    navigate("/"); // если sessionId нет, возвращаем на главную
     return null;
   }
 
@@ -26,7 +27,7 @@ const Game = () => {
     try {
       setLoading(true);
       setSelectedAnswer(null);
-      setCorrectAnswer(null);
+      setIsCorrect(null);
 
       const res = await axios.get("https://telsot.uz/game/next-word", {
         params: { session_id: sessionId },
@@ -43,30 +44,33 @@ const Game = () => {
       setWordId(res.data.word_id);
       setWord(res.data.word_en);
       setOptions(res.data.options);
-      setCorrectAnswer(res.data.correct_uz); // получаем правильный ответ для подсветки
+      setCorrectAnswer(res.data.correct_uz); // теперь backend должен отдавать correct_uz
+      setTimeLeft(res.data.time_left || 50);
     } catch (err) {
       console.error("Ошибка при получении слова:", err);
     } finally {
       setLoading(false);
+      setDisabled(false);
     }
   };
 
   const handleAnswer = async (answer: string) => {
     if (!wordId) return;
+    setDisabled(true);
+    setSelectedAnswer(answer);
 
     try {
-      setDisabled(true);
-      setSelectedAnswer(answer); // сохраняем выбранный ответ для подсветки
-    await axios.post("https://telsot.uz/game/submit-answer", {
+      const res = await axios.post("https://telsot.uz/game/submit-answer", {
         session_id: sessionId,
         word_id: wordId,
         selected: answer,
       });
 
-      // Через короткое время подгружаем следующее слово
+      setIsCorrect(res.data.isCorrect);
+
+      // через короткую паузу идёт следующий вопрос
       setTimeout(() => {
         fetchNextWord();
-        setDisabled(false);
       }, 800); // 0.8 секунды чтобы пользователь увидел цвет
     } catch (err) {
       console.error("Ошибка при отправке ответа:", err);
@@ -75,19 +79,14 @@ const Game = () => {
   };
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          clearInterval(timer);
-          navigate("/statistic");
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
+    let timer: any;
+    if (timeLeft > 0) {
+      timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+    } else {
+      navigate("/statistic");
+    }
     return () => clearInterval(timer);
-  }, [navigate]);
+  }, [timeLeft, navigate]);
 
   useEffect(() => {
     fetchNextWord();
@@ -128,11 +127,10 @@ const Game = () => {
 
       <div className="w-full space-y-4">
         {options.map((ans, index) => {
-          let bgClass = "bg-[#2C3A4D] hover:bg-[#36495f]"; // default
+          let bgClass = "bg-[#2C3A4D] hover:bg-[#36495f]";
           if (selectedAnswer) {
             if (ans === correctAnswer) bgClass = "bg-green-500";
-            else if (ans === selectedAnswer && ans !== correctAnswer) bgClass = "bg-red-500";
-            else bgClass = "bg-[#2C3A4D]";
+            else if (ans === selectedAnswer) bgClass = "bg-red-500";
           }
 
           return (
