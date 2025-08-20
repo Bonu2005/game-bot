@@ -31,16 +31,16 @@ const ChooseLevel = () => {
         return;
       }
       console.log(levelId);
-      
+            navigate("/game", {
+        state: { sessionId, levelId },
+      });
       await axios.post(
         `http://3.76.216.99:3000/game/choose-level?session_id=${sessionId}`,
         { level: levelId }
       );
 
       // Передаём sessionId и выбранный levelId в Game
-      navigate("/game", {
-        state: { sessionId, levelId },
-      });
+
     } catch (err) {
       console.error("Ошибка при выборе уровня:", err);
     }
