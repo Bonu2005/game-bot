@@ -31,13 +31,14 @@ const ChooseLevel = () => {
         return;
       }
       console.log(levelId);
-            navigate("/game", {
-        state: { sessionId, levelId },
-      });
+
       await axios.post(
         `https://telsot.uz/game/choose-level?session_id=${sessionId}`,
         { level: levelId }
       );
+      navigate("/game", {
+        state: { sessionId, levelId },
+      });
 
       // Передаём sessionId и выбранный levelId в Game
 
