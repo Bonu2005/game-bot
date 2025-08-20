@@ -8,15 +8,16 @@ const Game = () => {
   const state = location.state as { sessionId: string; levelId: number };
   const { sessionId } = state || {};
 
-  const [wordId, setWordId] = useState<number | null>(null);
+  const [wordId, setWordId] = useState<string | null>(null);
   const [word, setWord] = useState<string | null>(null);
   const [options, setOptions] = useState<string[]>([]);
   const [correctAnswer, setCorrectAnswer] = useState<string | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
+  const [_, setIsCorrect] = useState<boolean | null>(null);
   const [timeLeft, setTimeLeft] = useState(50);
   const [loading, setLoading] = useState(true);
   const [disabled, setDisabled] = useState(false);
+  const [startTime, setStartTime] = useState<number>(0); // для time_taken
 
   if (!sessionId) {
     navigate("/"); // если sessionId нет, возвращаем на главную
@@ -44,8 +45,10 @@ const Game = () => {
       setWordId(res.data.word_id);
       setWord(res.data.word_en);
       setOptions(res.data.options);
-      setCorrectAnswer(res.data.correct_uz); // теперь backend должен отдавать correct_uz
+      setCorrectAnswer(res.data.correct_uz); // бэк отдаёт правильный ответ
       setTimeLeft(res.data.time_left || 50);
+
+      setStartTime(Date.now()); // фиксируем момент появления вопроса
     } catch (err) {
       console.error("Ошибка при получении слова:", err);
     } finally {
@@ -59,11 +62,14 @@ const Game = () => {
     setDisabled(true);
     setSelectedAnswer(answer);
 
+    const timeTaken = Math.floor((Date.now() - startTime) / 1000); // считаем в секундах
+
     try {
       const res = await axios.post("https://telsot.uz/game/submit-answer", {
         session_id: sessionId,
         word_id: wordId,
         selected: answer,
+        time_taken: timeTaken, // добавили
       });
 
       setIsCorrect(res.data.isCorrect);
