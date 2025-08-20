@@ -14,15 +14,20 @@ const Game = () => {
   const [timeLeft, setTimeLeft] = useState(50);
   const [loading, setLoading] = useState(true);
   const [disabled, setDisabled] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [correctAnswer, setCorrectAnswer] = useState<string | null>(null);
 
   if (!sessionId) {
-    navigate("/"); // если sessionId нет, возвращаем на главную
+    navigate("/");
     return null;
   }
 
   const fetchNextWord = async () => {
     try {
       setLoading(true);
+      setSelectedAnswer(null);
+      setCorrectAnswer(null);
+
       const res = await axios.get("https://telsot.uz/game/next-word", {
         params: { session_id: sessionId },
       });
@@ -38,7 +43,7 @@ const Game = () => {
       setWordId(res.data.word_id);
       setWord(res.data.word_en);
       setOptions(res.data.options);
-      setTimeLeft(res.data.time_left || 50);
+      setCorrectAnswer(res.data.correct_uz); // получаем правильный ответ для подсветки
     } catch (err) {
       console.error("Ошибка при получении слова:", err);
     } finally {
@@ -47,30 +52,42 @@ const Game = () => {
   };
 
   const handleAnswer = async (answer: string) => {
+    if (!wordId) return;
+
     try {
       setDisabled(true);
-      await axios.post("https://telsot.uz/game/submit-answer", {
+      setSelectedAnswer(answer); // сохраняем выбранный ответ для подсветки
+    await axios.post("https://telsot.uz/game/submit-answer", {
         session_id: sessionId,
         word_id: wordId,
-        answer,
+        selected: answer,
       });
-      await fetchNextWord();
+
+      // Через короткое время подгружаем следующее слово
+      setTimeout(() => {
+        fetchNextWord();
+        setDisabled(false);
+      }, 800); // 0.8 секунды чтобы пользователь увидел цвет
     } catch (err) {
       console.error("Ошибка при отправке ответа:", err);
-    } finally {
       setDisabled(false);
     }
   };
 
   useEffect(() => {
-    let timer: any;
-    if (timeLeft > 0) {
-      timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
-    } else {
-      navigate("/statistic");
-    }
+    const timer = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          clearInterval(timer);
+          navigate("/statistic");
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
     return () => clearInterval(timer);
-  }, [timeLeft, navigate]);
+  }, [navigate]);
 
   useEffect(() => {
     fetchNextWord();
@@ -110,20 +127,25 @@ const Game = () => {
       <h2 className="text-[24px] font-bold mb-6 text-center">{word}</h2>
 
       <div className="w-full space-y-4">
-        {options.map((ans, index) => (
-          <button
-            key={index}
-            disabled={disabled}
-            onClick={() => handleAnswer(ans)}
-            className={`w-full py-4 rounded-xl text-white text-[16px] font-semibold transition ${
-              disabled
-                ? "bg-gray-500 cursor-not-allowed"
-                : "bg-[#2C3A4D] hover:bg-[#36495f]"
-            }`}
-          >
-            {ans}
-          </button>
-        ))}
+        {options.map((ans, index) => {
+          let bgClass = "bg-[#2C3A4D] hover:bg-[#36495f]"; // default
+          if (selectedAnswer) {
+            if (ans === correctAnswer) bgClass = "bg-green-500";
+            else if (ans === selectedAnswer && ans !== correctAnswer) bgClass = "bg-red-500";
+            else bgClass = "bg-[#2C3A4D]";
+          }
+
+          return (
+            <button
+              key={index}
+              disabled={disabled}
+              onClick={() => handleAnswer(ans)}
+              className={`w-full py-4 rounded-xl text-white text-[16px] font-semibold transition ${bgClass}`}
+            >
+              {ans}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
