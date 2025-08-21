@@ -12,15 +12,24 @@ const Start = () => {
   };
   const { telegramId, username, sessionId } = state;
 
-  const handleInvite = () => {
-    const gameUrl = "https://t.me/WordEngUz_bot?game=english";
-    const text = "Check out this cool game!";
-    const shareLink = `https://t.me/share/url?url=${encodeURIComponent(
-      gameUrl
-    )}&text=${encodeURIComponent(text)}`;
+const handleInvite = () => {
+  const gameUrl = "https://t.me/WordEngUz_bot?game=english";
+  const text = "Check out this cool game!";
+  
+  // tg:// открывает именно приложение Telegram
+  const tgDeepLink = `tg://msg_url?url=${encodeURIComponent(gameUrl)}&text=${encodeURIComponent(text)}`;
 
-    window.open(shareLink, "_blank");
-  };
+  // fallback для браузеров (ПК или если Telegram не установлен)
+  const webLink = `https://t.me/share/url?url=${encodeURIComponent(gameUrl)}&text=${encodeURIComponent(text)}`;
+
+  // пробуем сначала deep link
+  window.location.href = tgDeepLink;
+
+  // на всякий случай после небольшой задержки fallback в браузер
+  setTimeout(() => {
+    window.open(webLink, "_blank");
+  }, 800);
+};
 
   return (
     <div className="flex flex-col items-center justify-center px-6">
