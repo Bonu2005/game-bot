@@ -3,10 +3,14 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Game = () => {
-
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state as { sessionId: string; levelId: number, telegramId: number, username: string };
+  const state = location.state as {
+    sessionId: string;
+    levelId: number;
+    telegramId: number;
+    username: string;
+  };
   const { sessionId, telegramId, username } = state || {};
 
   const [wordId, setWordId] = useState<string | null>(null);
@@ -15,13 +19,13 @@ const Game = () => {
   const [correctAnswer, setCorrectAnswer] = useState<string | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [_, setIsCorrect] = useState<boolean | null>(null);
-  const [timeLeft, setTimeLeft] = useState(50);
+  const [timeLeft, setTimeLeft] = useState(50_000); // миллисекунды (50 секунд)
   const [loading, setLoading] = useState(true);
   const [disabled, setDisabled] = useState(false);
-  const [startTime, setStartTime] = useState<number>(0); // для time_taken
+  const [startTime, setStartTime] = useState<number>(0);
 
   if (!sessionId) {
-    navigate("/"); // если sessionId нет, возвращаем на главную
+    navigate("/"); 
     return null;
   }
 
@@ -46,10 +50,9 @@ const Game = () => {
       setWordId(res.data.word_id);
       setWord(res.data.word_en);
       setOptions(res.data.options);
-      setCorrectAnswer(res.data.correct_uz); // бэк отдаёт правильный ответ
-      setTimeLeft(res.data.time_left || 50);
-
-      setStartTime(Date.now()); // фиксируем момент появления вопроса
+      setCorrectAnswer(res.data.correct_uz);
+      setTimeLeft((res.data.time_left || 50) * 1000); // переводим в ms
+      setStartTime(Date.now());
     } catch (err) {
       console.error("Ошибка при получении слова:", err);
     } finally {
@@ -63,22 +66,21 @@ const Game = () => {
     setDisabled(true);
     setSelectedAnswer(answer);
 
-    const timeTaken = Math.floor((Date.now() - startTime) / 1000); // считаем в секундах
+    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
 
     try {
       const res = await axios.post("https://telsot.uz/game/submit-answer", {
         session_id: sessionId,
         word_id: wordId,
         selected: answer,
-        time_taken: timeTaken, // добавили
+        time_taken: timeTaken,
       });
 
       setIsCorrect(res.data.isCorrect);
 
-      // через короткую паузу идёт следующий вопрос
       setTimeout(() => {
         fetchNextWord();
-      }, 800); // 0.8 секунды чтобы пользователь увидел цвет
+      }, 800);
     } catch (err) {
       console.error("Ошибка при отправке ответа:", err);
       setDisabled(false);
@@ -88,7 +90,9 @@ const Game = () => {
   useEffect(() => {
     let timer: any;
     if (timeLeft > 0) {
-      timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
+      timer = setInterval(() => {
+        setTimeLeft((prev) => (prev > 0 ? prev - 10 : 0));
+      }, 10); // уменьшаем каждые 10мс
     } else {
       navigate("/statistic", { state: { sessionId, telegramId, username } });
     }
@@ -103,6 +107,12 @@ const Game = () => {
     return <div className="text-white text-center py-20">Loading...</div>;
   }
 
+  const formatTime = (ms: number) => {
+    const seconds = Math.floor(ms / 1000);
+    const milliseconds = Math.floor((ms % 1000) / 10); // сотые
+    return `${seconds}:${milliseconds.toString().padStart(2, "0")}`;
+  };
+
   return (
     <div className="text-white px-6 py-10 flex flex-col items-center">
       {/* Header */}
@@ -114,8 +124,8 @@ const Game = () => {
           Back
         </button>
         <p className="text-white font-bold">Quiz</p>
-        <div className="w-[60px] h-[24px] bg-[#1E2A3A] rounded-full flex items-center justify-center text-[12px]">
-          {timeLeft}s
+        <div className="w-[80px] h-[24px] bg-[#1E2A3A] rounded-full flex items-center justify-center text-[12px]">
+          {formatTime(timeLeft)}
         </div>
       </div>
 
@@ -123,7 +133,7 @@ const Game = () => {
       <div className="w-full h-[6px] bg-gray-600 rounded-full mb-6">
         <div
           className="h-full bg-orange-400 rounded-full"
-          style={{ width: `${(timeLeft / 50) * 100}%` }}
+          style={{ width: `${(timeLeft / 50_000) * 100}%` }}
         ></div>
       </div>
 
