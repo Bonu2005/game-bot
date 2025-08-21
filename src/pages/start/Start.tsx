@@ -2,24 +2,10 @@ import { Link, useLocation } from "react-router-dom";
 import image3 from "../../assets/imgs/image 3.svg";
 import shareplay from "../../assets/imgs/shareplay.svg";
 import play from "../../assets/imgs/play.circle.fill.svg";
-import { useEffect } from "react";
+
 
 const Start = () => {
-  useEffect(() => {
-    const audio = new Audio("/sounds/home.mp3"); // файл в public/sounds/home.mp3
-    audio.loop = true;
-    audio.volume = 0.5;
 
-    // пробуем запустить
-    audio.play().catch(() => {
-      console.log("Автовоспроизведение заблокировано, ждём клика пользователя");
-    });
-
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-    };
-  }, []);
   const location = useLocation();
   const state = location.state as { telegramId?: string; username?: string; sessionId?: string };
   const { telegramId, username, sessionId } = state;

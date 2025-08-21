@@ -3,21 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Game = () => {
-  useEffect(() => {
-    const audio = new Audio("/sounds/home.mp3"); // файл в public/sounds/home.mp3
-    audio.loop = true;
-    audio.volume = 0.5;
 
-    // пробуем запустить
-    audio.play().catch(() => {
-      console.log("Автовоспроизведение заблокировано, ждём клика пользователя");
-    });
-
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-    };
-  }, []);
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as { sessionId: string; levelId: number, telegramId: number, username: string };

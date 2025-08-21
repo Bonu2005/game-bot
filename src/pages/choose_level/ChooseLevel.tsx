@@ -7,7 +7,7 @@ import pre_inter from "../../assets/imgs/pre-inter.svg";
 import inter from "../../assets/imgs/inter.svg";
 import upper from "../../assets/imgs/upper.svg";
 import advanced from "../../assets/imgs/advenced.svg";
-import { useEffect } from "react";
+
 
 const levels = [
   { id: 1, icon: beginner, label: "Beginner" },
@@ -25,21 +25,7 @@ const ChooseLevel = () => {
   const state = location.state as { sessionId?: string,telegramId:number,username:string };
   const {sessionId,telegramId,username} = state;
   
-  useEffect(() => {
-    const audio = new Audio("/sounds/home.mp3"); // файл в public/sounds/home.mp3
-    audio.loop = true;
-    audio.volume = 0.5;
 
-    // пробуем запустить
-    audio.play().catch(() => {
-      console.log("Автовоспроизведение заблокировано, ждём клика пользователя");
-    });
-
-    return () => {
-      audio.pause();
-      audio.currentTime = 0;
-    };
-  }, []);
 
 
 
