@@ -115,7 +115,7 @@ const Statistic = () => {
 
   return (
     <div className="text-white pt-8 pb-6 px-4 flex flex-col items-center">
-      <h2 className="text-[20px] font-bold text-center mb-3">Leaders board</h2>
+      <h2 className="text-[20px] font-bold text-center mb-3">Leaders board {state.sessionId}</h2>
 
       <div className="flex items-center justify-center gap-2 mb-4">
         <button className="bg-[#2DBE64] text-white text-sm px-4 py-1 rounded-full">All</button>
