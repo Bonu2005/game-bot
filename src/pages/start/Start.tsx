@@ -12,42 +12,31 @@ const Start = () => {
   };
   const { telegramId, username, sessionId } = state;
 
-const handleInvite = () => {
-  const gameUrl = "https://t.me/WordEngUz_bot?game=english";
-  const text = "Check out this cool game!";
+  const handleInvite = () => {
+    const gameUrl = "https://t.me/WordEngUz_bot?game=english";
+    const text = "Check out this cool game!";
 
-  // deep link для приложения Telegram
-  const tgDeepLink = `tg://msg_url?url=${encodeURIComponent(gameUrl)}&text=${encodeURIComponent(text)}`;
+    const webLink = `https://t.me/share/url?url=${encodeURIComponent(
+      gameUrl
+    )}&text=${encodeURIComponent(text)}`;
 
-  // fallback ссылка для браузеров
-  const webLink = `https://t.me/share/url?url=${encodeURIComponent(gameUrl)}&text=${encodeURIComponent(text)}`;
-
-  // если есть поддержка Web Share API (нативный share в iOS/Android браузерах)
-  if (navigator.share) {
-    navigator
-      .share({
-        title: "Word Quiz",
-        text,
-        url: gameUrl,
-      })
-      .catch(() => {
-        // если юзер отменил share или не сработало → открываем Telegram
-        window.location.href = tgDeepLink;
-
-        // fallback на web версию, если телега не установлена
-        setTimeout(() => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: "Word Quiz",
+          text,
+          url: gameUrl,
+        })
+        .catch(() => {
+          // если отменил или не сработало → открываем web share
           window.open(webLink, "_blank");
-        }, 800);
-      });
-  } else {
-    // если Web Share API нет (ПК или старый браузер) → сразу Telegram
-    window.location.href = tgDeepLink;
-
-    setTimeout(() => {
+        });
+    } else {
+      // сразу web share для десктопа и старых мобилок
       window.open(webLink, "_blank");
-    }, 800);
-  }
-};
+    }
+  };
+
 
   return (
     <div className="flex flex-col items-center justify-center px-6">
