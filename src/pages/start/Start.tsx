@@ -15,20 +15,38 @@ const Start = () => {
 const handleInvite = () => {
   const gameUrl = "https://t.me/WordEngUz_bot?game=english";
   const text = "Check out this cool game!";
-  
-  // tg:// открывает именно приложение Telegram
+
+  // deep link для приложения Telegram
   const tgDeepLink = `tg://msg_url?url=${encodeURIComponent(gameUrl)}&text=${encodeURIComponent(text)}`;
 
-  // fallback для браузеров (ПК или если Telegram не установлен)
+  // fallback ссылка для браузеров
   const webLink = `https://t.me/share/url?url=${encodeURIComponent(gameUrl)}&text=${encodeURIComponent(text)}`;
 
-  // пробуем сначала deep link
-  window.location.href = tgDeepLink;
+  // если есть поддержка Web Share API (нативный share в iOS/Android браузерах)
+  if (navigator.share) {
+    navigator
+      .share({
+        title: "Word Quiz",
+        text,
+        url: gameUrl,
+      })
+      .catch(() => {
+        // если юзер отменил share или не сработало → открываем Telegram
+        window.location.href = tgDeepLink;
 
-  // на всякий случай после небольшой задержки fallback в браузер
-  setTimeout(() => {
-    window.open(webLink, "_blank");
-  }, 800);
+        // fallback на web версию, если телега не установлена
+        setTimeout(() => {
+          window.open(webLink, "_blank");
+        }, 800);
+      });
+  } else {
+    // если Web Share API нет (ПК или старый браузер) → сразу Telegram
+    window.location.href = tgDeepLink;
+
+    setTimeout(() => {
+      window.open(webLink, "_blank");
+    }, 800);
+  }
 };
 
   return (
