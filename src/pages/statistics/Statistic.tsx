@@ -28,7 +28,7 @@ const Statistic = () => {
   const navigate = useNavigate();
   const location = useLocation();
   
-  // Берём telegramId и username из state (переданного при navigate)
+
   const state = location.state as { telegramId?: number; username?: string; sessionId?: string };
   const telegramId = state?.telegramId;
   const username = state?.username;
@@ -83,9 +83,10 @@ const Statistic = () => {
     try {
       const res = await axios.post("https://telsot.uz/game/startGame", { telegramId, username });
       const newSessionId = res.data.session_id;
+      navigate("/start", { state: { telegramId, username, sessionId: newSessionId } });
 
       // Перенаправляем в Start с новым sessionId и тем же telegramId/username
-      navigate("/start", { state: { telegramId, username, sessionId: newSessionId } });
+      
     } catch (err) {
       console.error("Ошибка при запуске новой игры:", err);
     }
