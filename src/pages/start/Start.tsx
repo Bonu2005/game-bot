@@ -16,26 +16,14 @@ const Start = () => {
     const gameUrl = "https://t.me/WordEngUz_bot?game=english";
     const text = "Check out this cool game!";
 
-    const webLink = `https://t.me/share/url?url=${encodeURIComponent(
+    // официальная ссылка для инвайта в Telegram
+    const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(
       gameUrl
     )}&text=${encodeURIComponent(text)}`;
 
-    if (navigator.share) {
-      navigator
-        .share({
-          title: "Word Quiz",
-          text,
-          url: gameUrl,
-        })
-        .catch(() => {
-          // если отменил или не сработало → открываем web share
-          window.open(webLink, "_blank");
-        });
-    } else {
-      // сразу web share для десктопа и старых мобилок
-      window.open(webLink, "_blank");
-    }
+    window.location.href = telegramShareUrl;
   };
+
 
 
   return (
