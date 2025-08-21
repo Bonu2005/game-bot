@@ -74,24 +74,40 @@ const Statistic = () => {
   }, []);
 
   const handlePlayAgain = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault(); // предотвращаем потерю state при клике
-
-    if (!telegramId || !username) {
-      console.error("telegramId или username отсутствует!");
-      return;
-    }
+    e.preventDefault();
 
     try {
+    
+      const lastSessionRes = await axios.get(
+        `https://telsot.uz/game/finddata?session_id=${state?.sessionId}`
+      );
+
+      const lastSession = lastSessionRes.data.findUs;
+      if (!lastSession || !lastSession.user) {
+        console.error("Не удалось получить пользователя из последней сессии");
+        return;
+      }
+
+      const telegramId = lastSession.user.telegramId;
+      const username = lastSession.user.username;
+
+      if (!telegramId || !username) {
+        console.error("Telegram ID или username отсутствует");
+        return;
+      }
+
+      // 2. Создаём новую сессию на бэке
       const res = await axios.post("https://telsot.uz/game/startGame", { telegramId, username });
       const newSessionId = res.data.session_id;
-      navigate("/start", { state: { telegramId, username, sessionId: newSessionId } });
 
-      // Перенаправляем в Start с новым sessionId и тем же telegramId/username
+      // 3. Перенаправляем в Start с новым sessionId
+      navigate("/start", { state: { telegramId, username, sessionId: newSessionId } });
 
     } catch (err) {
       console.error("Ошибка при запуске новой игры:", err);
     }
   };
+
 
   const data = players.slice(0, visible);
 
