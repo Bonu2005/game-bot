@@ -19,13 +19,13 @@ const Game = () => {
   const [correctAnswer, setCorrectAnswer] = useState<string | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [_, setIsCorrect] = useState<boolean | null>(null);
-  const [timeLeft, setTimeLeft] = useState(50_000); // миллисекунды (50 секунд)
+  const [timeLeft, setTimeLeft] = useState(50_000);
   const [loading, setLoading] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const [startTime, setStartTime] = useState<number>(0);
 
   if (!sessionId) {
-    navigate("/"); 
+    navigate("/");
     return null;
   }
 
@@ -51,13 +51,19 @@ const Game = () => {
       setWord(res.data.word_en);
       setOptions(res.data.options);
       setCorrectAnswer(res.data.correct_uz);
-      setTimeLeft((res.data.time_left || 50) * 1000); // переводим в ms
+      setTimeLeft((res.data.time_left || 50) * 1000);
       setStartTime(Date.now());
     } catch (err) {
       console.error("Ошибка при получении слова:", err);
     } finally {
       setLoading(false);
       setDisabled(false);
+    }
+  };
+
+  const vibrate = (pattern: number | number[]) => {
+    if ("vibrate" in navigator) {
+      navigator.vibrate(pattern);
     }
   };
 
@@ -78,6 +84,13 @@ const Game = () => {
 
       setIsCorrect(res.data.isCorrect);
 
+      // Вибрация в зависимости от результата
+      if (res.data.isCorrect) {
+        vibrate(150); // короткая вибрация
+      } else {
+        vibrate([100, 50, 100]); // двойная вибрация
+      }
+
       setTimeout(() => {
         fetchNextWord();
       }, 800);
@@ -92,7 +105,7 @@ const Game = () => {
     if (timeLeft > 0) {
       timer = setInterval(() => {
         setTimeLeft((prev) => (prev > 0 ? prev - 10 : 0));
-      }, 10); // уменьшаем каждые 10мс
+      }, 10);
     } else {
       navigate("/statistic", { state: { sessionId, telegramId, username } });
     }
@@ -109,7 +122,7 @@ const Game = () => {
 
   const formatTime = (ms: number) => {
     const seconds = Math.floor(ms / 1000);
-    const milliseconds = Math.floor((ms % 1000) / 10); // сотые
+    const milliseconds = Math.floor((ms % 1000) / 10);
     return `${seconds}:${milliseconds.toString().padStart(2, "0")}`;
   };
 
