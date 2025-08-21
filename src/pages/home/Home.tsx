@@ -5,14 +5,16 @@ import { Link, useLocation } from "react-router-dom";
 const Home = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const sessionId = params.get("session_id"); // берём session_id из URL
 
+  const telegramId = params.get("telegramId");
+  const username = params.get("username");
+  const sessionId = params.get("session_id");
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="mb-[140px]">
         <Link 
           to="/start" 
-          state={{ sessionId }} // передаём его в Start
+          state={{ telegramId, username, sessionId }} // передаём его в Start
         >
           <img src={logo} alt="logo" />
         </Link>

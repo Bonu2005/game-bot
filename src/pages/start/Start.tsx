@@ -4,9 +4,10 @@ import shareplay from "../../assets/imgs/shareplay.svg";
 import play from "../../assets/imgs/play.circle.fill.svg";
 
 const Start = () => {
-  const location = useLocation();
-  const state = location.state as { sessionId?: string };
-  const sessionId = state?.sessionId;
+ const location = useLocation();
+  const state = location.state as { telegramId?: string; username?: string; sessionId?: string };
+  const { telegramId, username, sessionId } = state;
+
 
   return (
     <div className="flex flex-col items-center justify-center px-6">
@@ -29,7 +30,7 @@ const Start = () => {
 
       <Link
         to="/chooseLevel"
-        state={{ sessionId }} // передаём sessionId дальше
+        state={{ telegramId, username, sessionId }}
         className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-[#FFA500] shadow-md"
       >
         <img src={play} alt="Play" className="w-6 h-6 mr-2" />
