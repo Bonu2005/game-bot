@@ -20,13 +20,10 @@ const levels = [
 const ChooseLevel = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state as { sessionId?: string };
-  const sessionId = state?.sessionId;
+  const state = location.state as { sessionId?: string,telegramId:number,username:string };
+  const {sessionId,telegramId,username} = state;
 
-  const params = new URLSearchParams(location.search);
 
-  const telegramId = params.get("telegramId");
-  const username = params.get("username");
 
 
   const handleChoose = async (levelId: number) => {
