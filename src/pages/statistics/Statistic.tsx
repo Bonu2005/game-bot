@@ -73,7 +73,7 @@ const Statistic = () => {
   }, []);
 
   const handlePlayAgain = async () => {
-    if (!telegramId || !username) return;
+   
 
     try {
       const res = await axios.post("https://telsot.uz/game/startGame", { telegramId, username });
