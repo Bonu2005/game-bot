@@ -31,8 +31,7 @@ const Statistic = () => {
 
 
   const state = location.state as { telegramId?: number; username?: string; sessionId?: string };
-  const telegramId = state?.telegramId;
-  const username = state?.username;
+
 
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
