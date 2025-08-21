@@ -5,8 +5,8 @@
   const Game = () => {
     const navigate = useNavigate();
     const location = useLocation();
-    const state = location.state as { sessionId: string; levelId: number };
-    const { sessionId } = state || {};
+    const state = location.state as { sessionId: string; levelId: number ,telegramId:number,username:string};
+    const { sessionId,telegramId,username } = state || {};
 
     const [wordId, setWordId] = useState<string | null>(null);
     const [word, setWord] = useState<string | null>(null);
@@ -38,7 +38,7 @@
           res.data.message === "Game ended by timer" ||
           res.data.message === "No more words available"
         ) {
-          navigate("/statistic",{ state: { sessionId } });
+          navigate("/statistic",{ state: { sessionId ,telegramId,username} });
           return;
         }
 
@@ -89,7 +89,7 @@
       if (timeLeft > 0) {
         timer = setInterval(() => setTimeLeft((prev) => prev - 1), 1000);
       } else {
-        navigate("/statistic",{ state: { sessionId } });
+        navigate("/statistic",{ state: { sessionId ,telegramId,username} });
       }
       return () => clearInterval(timer);
     }, [timeLeft, navigate]);

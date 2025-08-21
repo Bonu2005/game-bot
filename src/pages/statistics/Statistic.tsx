@@ -27,11 +27,11 @@ const placeIcon = (place: number) => {
 const Statistic = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const params = new URLSearchParams(location.search);
   
-  // Получаем telegramId и username из URL
-  const telegramId = params.get("telegramId");
-  const username = params.get("username");
+  // Берём telegramId и username из state (переданного при navigate)
+  const state = location.state as { telegramId?: number; username?: string; sessionId?: string };
+  const telegramId = state?.telegramId;
+  const username = state?.username;
 
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
@@ -72,14 +72,19 @@ const Statistic = () => {
     fetchData();
   }, []);
 
-  const handlePlayAgain = async () => {
-   
+  const handlePlayAgain = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // предотвращаем потерю state при клике
+
+    if (!telegramId || !username) {
+      console.error("telegramId или username отсутствует!");
+      return;
+    }
 
     try {
       const res = await axios.post("https://telsot.uz/game/startGame", { telegramId, username });
       const newSessionId = res.data.session_id;
 
-      // Перенаправляем в Start с новым sessionId
+      // Перенаправляем в Start с новым sessionId и тем же telegramId/username
       navigate("/start", { state: { telegramId, username, sessionId: newSessionId } });
     } catch (err) {
       console.error("Ошибка при запуске новой игры:", err);
@@ -108,9 +113,7 @@ const Statistic = () => {
           return (
             <div
               key={`${p.username}-${p.place}`}
-              className={`flex items-center justify-between px-4 py-3 rounded-xl ${
-                isFirst ? "bg-[#2DBE64] text-white" : "bg-white text-black"
-              }`}
+              className={`flex items-center justify-between px-4 py-3 rounded-xl ${isFirst ? "bg-[#2DBE64] text-white" : "bg-white text-black"}`}
             >
               <div className="flex items-center gap-3">
                 <div className="w-6 h-6 flex items-center justify-center">

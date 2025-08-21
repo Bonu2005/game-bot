@@ -23,6 +23,12 @@ const ChooseLevel = () => {
   const state = location.state as { sessionId?: string };
   const sessionId = state?.sessionId;
 
+  const params = new URLSearchParams(location.search);
+
+  const telegramId = params.get("telegramId");
+  const username = params.get("username");
+
+
   const handleChoose = async (levelId: number) => {
     try {
       // if (!sessionId) {
@@ -37,7 +43,7 @@ const ChooseLevel = () => {
         { level: levelId }
       );
       navigate("/game", {
-        state: { sessionId, levelId },
+        state: { sessionId, levelId,telegramId,username },
       });
 
       // Передаём sessionId и выбранный levelId в Game
