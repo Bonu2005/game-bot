@@ -15,6 +15,9 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
+      <p className="bg-white">{sessionId}</p>
+      <p className="bg-white">{telegramId}</p>
+      <p className="bg-white">{username}</p>
       <div className="mb-[140px]">
         <Link
           to="/start"

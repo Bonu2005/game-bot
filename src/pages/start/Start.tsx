@@ -43,7 +43,9 @@ const Start = () => {
       <h1 className="text-white font-bold text-[24px] mb-6">
         Word Quiz {username}
       </h1>
-
+    
+    <p className="bg-white">{sessionId}</p>
+    <p className="bg-white">{telegramId}</p>
       <img src={image3} alt="Quiz" className="w-[220px] h-auto mb-10" />
 
       {/* Invite button */}
