@@ -69,9 +69,6 @@ const Start = () => {
 
       {/* Отображение текущего sessionId и telegramId для отладки */}
       <div className="bg-white p-2 mb-4 text-sm text-gray-800 rounded">
-        <p>sessionId: {currentSessionId}</p>
-        <p>telegramId: {telegramId}</p>
-        <p>chatId: {currentChatId}</p>
       </div>
 
       <img src={image3} alt="Quiz" className="w-[220px] h-auto mb-10" />
