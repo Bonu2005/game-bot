@@ -39,11 +39,14 @@ const Game = () => {
         params: { sessionId },
       });
 
-      if (res.data.message) {
-        // значит игра закончилась
-        navigate("/statistic", { state: { sessionId, telegramId, username } });
-        return;
-      }
+if (
+  res.data.message === "Time is up. Game ended." ||
+  res.data.message === "No more words available. Game ended."
+) {
+  navigate("/statistic", { state: { sessionId, telegramId, username } });
+  return;
+}
+
 
       setWordId(res.data.word_id);
       setWord(res.data.word_en);
