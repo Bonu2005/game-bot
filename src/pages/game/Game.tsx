@@ -16,9 +16,8 @@ const Game = () => {
   const [wordId, setWordId] = useState<string | null>(null);
   const [word, setWord] = useState<string | null>(null);
   const [options, setOptions] = useState<string[]>([]);
-  const [correctAnswer, setCorrectAnswer] = useState<string | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
-  const [_, setIsCorrect] = useState<boolean | null>(null);
+  const [isCorrect, setIsCorrect] = useState<boolean | null>(null);
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [disabled, setDisabled] = useState(false);
@@ -29,6 +28,7 @@ const Game = () => {
     return null;
   }
 
+  // 📥 получить вопрос
   const fetchNextWord = async () => {
     try {
       setLoading(true);
@@ -39,10 +39,8 @@ const Game = () => {
         params: { sessionId },
       });
 
-      if (
-        res.data.message === "Time is up. Game ended." ||
-        res.data.message === "No more words available. Game ended."
-      ) {
+      if (res.data.message) {
+        // значит игра закончилась
         navigate("/statistic", { state: { sessionId, telegramId, username } });
         return;
       }
@@ -50,7 +48,6 @@ const Game = () => {
       setWordId(res.data.word_id);
       setWord(res.data.word_en);
       setOptions(res.data.options);
-      setCorrectAnswer(res.data.correct_uz);
 
       setDeadline(res.data.deadlineMs);
       setTimeLeft(res.data.deadlineMs - Date.now());
@@ -62,6 +59,7 @@ const Game = () => {
     }
   };
 
+  // 📤 отправить ответ
   const handleAnswer = async (answer: string) => {
     if (!wordId) return;
     setDisabled(true);
@@ -76,6 +74,11 @@ const Game = () => {
         time_taken: timeTaken,
       });
 
+      if (res.data.message) {
+        navigate("/statistic", { state: { sessionId, telegramId, username } });
+        return;
+      }
+
       setIsCorrect(res.data.isCorrect);
 
       // Вибрация
@@ -89,7 +92,7 @@ const Game = () => {
     }
   };
 
-  // Таймер, ориентированный на серверный дедлайн
+  // ⏱ серверный дедлайн
   useEffect(() => {
     const tick = () => {
       const left = deadline - Date.now();
@@ -108,7 +111,8 @@ const Game = () => {
     fetchNextWord();
   }, []);
 
-  if (loading) return <div className="text-white text-center py-20">Loading...</div>;
+  if (loading)
+    return <div className="text-white text-center py-20">Loading...</div>;
 
   const formatTime = (ms: number) => {
     const seconds = Math.floor(ms / 1000);
@@ -120,7 +124,12 @@ const Game = () => {
     <div className="text-white px-6 py-10 flex flex-col items-center">
       {/* Header */}
       <div className="w-full flex justify-between items-center mb-4">
-        <button className="text-blue-400 font-semibold" onClick={() => navigate(-1)}>Back</button>
+        <button
+          className="text-blue-400 font-semibold"
+          onClick={() => navigate(-1)}
+        >
+          Back
+        </button>
         <p className="text-white font-bold">Quiz</p>
         <div className="w-[80px] h-[24px] bg-[#1E2A3A] rounded-full flex items-center justify-center text-[12px]">
           {formatTime(timeLeft)}
@@ -144,8 +153,9 @@ const Game = () => {
         {options.map((ans, index) => {
           let bgClass = "bg-[#2C3A4D] hover:bg-[#36495f]";
           if (selectedAnswer) {
-            if (ans === correctAnswer) bgClass = "bg-green-500";
-            else if (ans === selectedAnswer) bgClass = "bg-red-500";
+            if (ans === selectedAnswer) {
+              bgClass = isCorrect ? "bg-green-500" : "bg-red-500";
+            }
           }
 
           return (
