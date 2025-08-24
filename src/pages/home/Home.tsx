@@ -10,9 +10,7 @@ const API_URL = "https://telsot.uz/game"; // 👈 сюда твой бэкенд
 const Home = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
   const params = new URLSearchParams(location.search);
-
   const telegramId = params.get("telegramId");
   const username = params.get("username");
   const chatId = params.get("chatId");

@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import axios from "axios";
 import image3 from "../../assets/imgs/image 3.svg";
 import shareplay from "../../assets/imgs/shareplay.svg";
 import play from "../../assets/imgs/play.circle.fill.svg";
-import axios from "axios";
 
 const Start = () => {
   const location = useLocation();
@@ -11,46 +12,54 @@ const Start = () => {
     username?: string;
     sessionId?: string;
     chatId?: string;
-  };
-  const { telegramId, username, sessionId, chatId } = state;
+  } || {};
 
-const handleInvite = async () => {
-  try {
-    // chatId всегда один для группы (создатель = game_telegramId)
-    const groupChatId = chatId ?? `game_${telegramId}`;
+  const { telegramId, username, chatId: initialChatId } = state;
 
-    // Создаём сессию для себя (но chatId общий)
-    const res = await axios.post("https://telsot.uz/game/start", {
-      telegramId,
-      username,
-      chatId: groupChatId,
-    });
+  // Используем локальный стейт для актуализации sessionId и chatId
+  const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(state.sessionId);
+  const [currentChatId, setCurrentChatId] = useState<string | undefined>(initialChatId);
 
-    const newSessionId = res.data.session_id;
-
-    // 👇 Вместо sessionId в ссылку передаём chatId
-    const gameUrl = `https://t.me/WordEngUz_bot?game=english&chatId=${groupChatId}`;
-    const text = `Hey! Join me in Word Quiz! 🕹️`;
-
-    const webLink = `https://t.me/share/url?url=${encodeURIComponent(
-      gameUrl
-    )}&text=${encodeURIComponent(text)}`;
-
-    if (navigator.share) {
-      await navigator.share({
-        title: "Word Quiz",
-        text,
-        url: gameUrl,
-      });
-    } else {
-      window.open(webLink, "_blank");
+  const handleInvite = async () => {
+    if (!telegramId || !username) {
+      alert("Недостаточно данных для приглашения.");
+      return;
     }
-  } catch (err) {
-    console.error("Ошибка при инвайте:", err);
-    alert("Не удалось создать приглашение 😔");
-  }
-};
 
+    try {
+      const groupChatId = currentChatId ?? `game_${telegramId}`;
+
+      const res = await axios.post("https://telsot.uz/game/start", {
+        telegramId,
+        username,
+        chatId: groupChatId,
+      });
+
+      const newSessionId = res.data.session_id;
+      setCurrentSessionId(newSessionId);
+      setCurrentChatId(groupChatId);
+
+      const gameUrl = `https://t.me/WordEngUz_bot?game=english&chatId=${groupChatId}`;
+      const shareText = `Hey! Join me in Word Quiz! 🕹️`;
+
+      const webShareLink = `https://t.me/share/url?url=${encodeURIComponent(
+        gameUrl
+      )}&text=${encodeURIComponent(shareText)}`;
+
+      if (navigator.share) {
+        await navigator.share({
+          title: "Word Quiz",
+          text: shareText,
+          url: gameUrl,
+        });
+      } else {
+        window.open(webShareLink, "_blank");
+      }
+    } catch (err) {
+      console.error("Ошибка при создании приглашения:", err);
+      alert("Не удалось создать приглашение. Попробуйте позже.");
+    }
+  };
 
   return (
     <div className="flex flex-col items-center justify-center px-6">
@@ -58,11 +67,16 @@ const handleInvite = async () => {
         Word Quiz {username}
       </h1>
 
-      <p className="bg-white">{sessionId}</p>
-      <p className="bg-white">{telegramId}</p>
+      {/* Отображение текущего sessionId и telegramId для отладки */}
+      <div className="bg-white p-2 mb-4 text-sm text-gray-800 rounded">
+        <p>sessionId: {currentSessionId}</p>
+        <p>telegramId: {telegramId}</p>
+        <p>chatId: {currentChatId}</p>
+      </div>
+
       <img src={image3} alt="Quiz" className="w-[220px] h-auto mb-10" />
 
-      {/* Invite button */}
+      {/* Invite Friends */}
       <div
         className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-white mb-4 shadow-md cursor-pointer"
         onClick={handleInvite}
@@ -71,14 +85,19 @@ const handleInvite = async () => {
         <p className="text-black text-[16px] font-medium">Invite friends</p>
       </div>
 
-      {/* Play button */}
+      {/* Play */}
       <Link
         to="/chooseLevel"
-        state={{ telegramId, username, sessionId }}
+        state={{
+          telegramId,
+          username,
+          sessionId: currentSessionId,
+          chatId: currentChatId,
+        }}
         className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-[#FFA500] shadow-md"
       >
         <img src={play} alt="Play" className="w-6 h-6 mr-2" />
-        <p className="text-white text-[16px] font-semibold">Play {sessionId}</p>
+        <p className="text-white text-[16px] font-semibold">Play</p>
       </Link>
     </div>
   );
