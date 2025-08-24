@@ -36,7 +36,7 @@ const Game = () => {
       setIsCorrect(null);
 
       const res = await axios.get("https://telsot.uz/game/next-word", {
-        params: { session_id: sessionId },
+        params: { sessionId },
       });
 
       if (
