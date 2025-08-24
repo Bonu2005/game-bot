@@ -10,6 +10,7 @@ const Home = () => {
   const telegramId = params.get("telegramId");
   const username = params.get("username");
   const sessionId = params.get("session_id");
+  const chatId = params.get("chatId");
 
 
 
@@ -19,6 +20,8 @@ const Home = () => {
       <p className="bg-white">sessionId: {sessionId}</p>
       <p className="bg-white">telegramId: {telegramId}</p>
       <p className="bg-white">username: {username}</p>
+      <p className="bg-white">username: {username}</p>
+      <p className="bg-white">username: {chatId}</p>
       <div className="mb-[140px]">
         <Link
           to="/start"
