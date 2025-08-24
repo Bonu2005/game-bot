@@ -56,7 +56,7 @@ const ChooseLevel = () => {
   return (
     <div className="flex flex-col items-center py-10 px-6">
       <h1 className="text-white font-bold text-[24px] mb-8">
-        Choose your level {username}
+        Choose your level {sessionId}
       </h1>
       <div className="grid grid-cols-2 gap-x-5 gap-y-6">
         {levels.map((level) => (
