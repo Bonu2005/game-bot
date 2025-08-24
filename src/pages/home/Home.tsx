@@ -5,7 +5,7 @@ import axios from "axios";
 import logo from "../../assets/imgs/Logo Example.svg";
 import loader from "../../assets/imgs/loader.png";
 
-const API_URL = "http://localhost:3000/game"; // 👈 сюда твой бэкенд
+const API_URL = "https://telsot.uz/game"; // 👈 сюда твой бэкенд
 
 const Home = () => {
   const location = useLocation();
