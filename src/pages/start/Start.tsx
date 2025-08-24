@@ -64,12 +64,10 @@ const Start = () => {
   return (
     <div className="flex flex-col items-center justify-center px-6">
       <h1 className="text-white font-bold text-[24px] mb-6">
-        Word Quiz {username}
+        Word Quiz
       </h1>
 
-      {/* Отображение текущего sessionId и telegramId для отладки */}
-      <div className="bg-white p-2 mb-4 text-sm text-gray-800 rounded">
-      </div>
+    
 
       <img src={image3} alt="Quiz" className="w-[220px] h-auto mb-10" />
 
