@@ -78,7 +78,7 @@ const handleInvite = async () => {
         className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-[#FFA500] shadow-md"
       >
         <img src={play} alt="Play" className="w-6 h-6 mr-2" />
-        <p className="text-white text-[16px] font-semibold">Play</p>
+        <p className="text-white text-[16px] font-semibold">Play {sessionId}</p>
       </Link>
     </div>
   );
