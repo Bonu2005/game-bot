@@ -45,6 +45,10 @@ const Home = () => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="mb-[140px]">
+        <p>{telegramId}</p>
+        <p>{username}</p>
+        <p>{chatId}</p>
+
         <img src={logo} alt="logo" />
       </div>
       <img src={loader} alt="loader" />
