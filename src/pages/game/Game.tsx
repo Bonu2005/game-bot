@@ -19,10 +19,10 @@ const Game = () => {
   const [correctAnswer, setCorrectAnswer] = useState<string | null>(null);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
   const [_, setIsCorrect] = useState<boolean | null>(null);
-  const [timeLeft, setTimeLeft] = useState(50_000);
+  const [timeLeft, setTimeLeft] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [disabled, setDisabled] = useState(false);
-  const [startTime, setStartTime] = useState<number>(0);
+  const [deadline, setDeadline] = useState<number>(0);
 
   if (!sessionId) {
     navigate("/");
@@ -40,8 +40,8 @@ const Game = () => {
       });
 
       if (
-        res.data.message === "Game ended by timer" ||
-        res.data.message === "No more words available"
+        res.data.message === "Time is up. Game ended." ||
+        res.data.message === "No more words available. Game ended."
       ) {
         navigate("/statistic", { state: { sessionId, telegramId, username } });
         return;
@@ -51,8 +51,9 @@ const Game = () => {
       setWord(res.data.word_en);
       setOptions(res.data.options);
       setCorrectAnswer(res.data.correct_uz);
-      setTimeLeft((res.data.time_left || 50) * 1000);
-      setStartTime(Date.now());
+
+      setDeadline(res.data.deadlineMs);
+      setTimeLeft(res.data.deadlineMs - Date.now());
     } catch (err) {
       console.error("Ошибка при получении слова:", err);
     } finally {
@@ -61,19 +62,12 @@ const Game = () => {
     }
   };
 
-  const vibrate = (pattern: number | number[]) => {
-    if ("vibrate" in navigator) {
-      navigator.vibrate(pattern);
-    }
-  };
-
   const handleAnswer = async (answer: string) => {
     if (!wordId) return;
     setDisabled(true);
     setSelectedAnswer(answer);
 
-    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
-
+    const timeTaken = Math.floor((deadline - Date.now()) / 1000);
     try {
       const res = await axios.post("https://telsot.uz/game/submit-answer", {
         session_id: sessionId,
@@ -84,41 +78,37 @@ const Game = () => {
 
       setIsCorrect(res.data.isCorrect);
 
-      // Вибрация в зависимости от результата
-      if (res.data.isCorrect) {
-        vibrate(150); // короткая вибрация
-      } else {
-        vibrate([100, 50, 100]); // двойная вибрация
-      }
+      // Вибрация
+      if (res.data.isCorrect) navigator.vibrate?.(150);
+      else navigator.vibrate?.([100, 50, 100]);
 
-      setTimeout(() => {
-        fetchNextWord();
-      }, 800);
+      setTimeout(fetchNextWord, 800);
     } catch (err) {
       console.error("Ошибка при отправке ответа:", err);
       setDisabled(false);
     }
   };
 
+  // Таймер, ориентированный на серверный дедлайн
   useEffect(() => {
-    let timer: any;
-    if (timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft((prev) => (prev > 0 ? prev - 10 : 0));
-      }, 10);
-    } else {
-      navigate("/statistic", { state: { sessionId, telegramId, username } });
-    }
+    const tick = () => {
+      const left = deadline - Date.now();
+      if (left <= 0) {
+        navigate("/statistic", { state: { sessionId, telegramId, username } });
+        return;
+      }
+      setTimeLeft(left);
+    };
+
+    const timer = setInterval(tick, 50);
     return () => clearInterval(timer);
-  }, [timeLeft, navigate]);
+  }, [deadline, navigate, sessionId, telegramId, username]);
 
   useEffect(() => {
     fetchNextWord();
   }, []);
 
-  if (loading) {
-    return <div className="text-white text-center py-20">Loading...</div>;
-  }
+  if (loading) return <div className="text-white text-center py-20">Loading...</div>;
 
   const formatTime = (ms: number) => {
     const seconds = Math.floor(ms / 1000);
@@ -130,12 +120,7 @@ const Game = () => {
     <div className="text-white px-6 py-10 flex flex-col items-center">
       {/* Header */}
       <div className="w-full flex justify-between items-center mb-4">
-        <button
-          className="text-blue-400 font-semibold"
-          onClick={() => navigate(-1)}
-        >
-          Back
-        </button>
+        <button className="text-blue-400 font-semibold" onClick={() => navigate(-1)}>Back</button>
         <p className="text-white font-bold">Quiz</p>
         <div className="w-[80px] h-[24px] bg-[#1E2A3A] rounded-full flex items-center justify-center text-[12px]">
           {formatTime(timeLeft)}
@@ -146,7 +131,7 @@ const Game = () => {
       <div className="w-full h-[6px] bg-gray-600 rounded-full mb-6">
         <div
           className="h-full bg-orange-400 rounded-full"
-          style={{ width: `${(timeLeft / 50_000) * 100}%` }}
+          style={{ width: `${(timeLeft / 5000) * 100}%` }}
         ></div>
       </div>
 
