@@ -41,7 +41,21 @@ const Statistic = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const lbRes = await axios.get("https://telsot.uz/game/leaderboard");
+        let url = "https://telsot.uz/game/leaderboard/global";
+
+        if (state?.sessionId) {
+          // вытаскиваем инфу о сессии (чтобы понять chatId)
+          const resultRes = await axios.get("https://telsot.uz/game/result", {
+            params: { sessionId: state.sessionId },
+          });
+
+          const chatId = resultRes.data?.chatId;
+          if (chatId) {
+            url = `https://telsot.uz/game/leaderboard/chat?chatId=${chatId}`;
+          }
+        }
+
+        const lbRes = await axios.get(url);
         const raw = lbRes.data;
 
         const arr: Player[] = Array.isArray(raw)
@@ -49,16 +63,9 @@ const Statistic = () => {
             place: p.place,
             username: p.username,
             score: p.score,
-            level: p.level || "Unknown",
+            level: p.bestLevel || "Unknown",
           }))
-          : Array.isArray(raw?.players)
-            ? raw.players.map((p: any) => ({
-              place: p.place,
-              username: p.username,
-              score: p.score,
-              level: p.level || "Unknown",
-            }))
-            : [];
+          : [];
 
         setPlayers(arr);
       } catch (e) {
@@ -70,13 +77,14 @@ const Statistic = () => {
     };
 
     fetchData();
-  }, []);
+  }, [state?.sessionId]);
+
 
   const handlePlayAgain = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     try {
-    
+
       const lastSessionRes = await axios.get(
         `https://telsot.uz/game/finddata?session_id=${state?.sessionId}`
       );
