@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom";
 import image3 from "../../assets/imgs/image 3.svg";
 import shareplay from "../../assets/imgs/shareplay.svg";
 import play from "../../assets/imgs/play.circle.fill.svg";
+import axios from "axios";
 
 const Start = () => {
   const location = useLocation();
@@ -9,43 +10,54 @@ const Start = () => {
     telegramId?: string;
     username?: string;
     sessionId?: string;
+    chatId?: string;
   };
-  const { telegramId, username, sessionId } = state;
+  const { telegramId, username, sessionId, chatId } = state;
 
-  const handleInvite = () => {
-    const gameUrl = "https://t.me/WordEngUz_bot?game=english";
-    const text = "Check out this cool game!";
+  const handleInvite = async () => {
+    try {
+      // 1. Создаём сессию через наш бэк
+      const res = await axios.post("https://telsot.uz/game/start", {
+        telegramId,
+        username,
+        chatId: chatId ?? `game_${telegramId}`, // если нет — фейковый
+      });
 
-    const webLink = `https://t.me/share/url?url=${encodeURIComponent(
-      gameUrl
-    )}&text=${encodeURIComponent(text)}`;
+      const newSessionId = res.data.session_id;
 
-    if (navigator.share) {
-      navigator
-        .share({
+      // 2. Генерим ссылку для друга
+      const gameUrl = `https://t.me/WordEngUz_bot?game=english&session_id=${newSessionId}`;
+      const text = `Hey! Join me in Word Quiz! 🕹️`;
+
+      const webLink = `https://t.me/share/url?url=${encodeURIComponent(
+        gameUrl
+      )}&text=${encodeURIComponent(text)}`;
+
+      // 3. Пробуем нативный share
+      if (navigator.share) {
+        await navigator.share({
           title: "Word Quiz",
           text,
           url: gameUrl,
-        })
-        .catch(() => {
-          // если отменил или не сработало → открываем web share
-          window.open(webLink, "_blank");
         });
-    } else {
-      // сразу web share для десктопа и старых мобилок
-      window.open(webLink, "_blank");
+      } else {
+        // fallback — телеграм-шерилка
+        window.open(webLink, "_blank");
+      }
+    } catch (err) {
+      console.error("Ошибка при инвайте:", err);
+      alert("Не удалось создать приглашение 😔");
     }
   };
-
 
   return (
     <div className="flex flex-col items-center justify-center px-6">
       <h1 className="text-white font-bold text-[24px] mb-6">
         Word Quiz {username}
       </h1>
-    
-    <p className="bg-white">{sessionId}</p>
-    <p className="bg-white">{telegramId}</p>
+
+      <p className="bg-white">{sessionId}</p>
+      <p className="bg-white">{telegramId}</p>
       <img src={image3} alt="Quiz" className="w-[220px] h-auto mb-10" />
 
       {/* Invite button */}
