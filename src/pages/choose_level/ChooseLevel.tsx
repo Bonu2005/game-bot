@@ -8,7 +8,6 @@ import inter from "../../assets/imgs/inter.svg";
 import upper from "../../assets/imgs/upper.svg";
 import advanced from "../../assets/imgs/advenced.svg";
 
-
 const levels = [
   { id: 1, icon: beginner, label: "Beginner" },
   { id: 2, icon: elementary, label: "Elementary" },
@@ -19,48 +18,52 @@ const levels = [
 ];
 
 const ChooseLevel = () => {
-  
   const navigate = useNavigate();
   const location = useLocation();
-  const state = location.state as { sessionId?: string,telegramId:number,username:string };
-  const {sessionId,telegramId,username} = state;
-  
 
+  const state = location.state as {
+    sessionId?: string;
+    telegramId?: number;
+    username?: string;
+  };
 
-
+  const { sessionId, telegramId, username } = state || {};
 
   const handleChoose = async (levelId: number) => {
-    try {
-      // if (!sessionId) {
-      //   console.error("Нет session_id — начни игру сначала");
-      //   navigate("/");
-      //   return;
-      // }
-      console.log(levelId);
+    if (!sessionId || !telegramId) {
+      alert("⚠️ Ошибка: нет активной игровой сессии");
+      navigate("/");
+      return;
+    }
 
-      await axios.post(
-        `https://telsot.uz/game/choose-level?session_id=${sessionId}`,
-        { level: levelId }
-      );
-      navigate("/game", {
-        state: { sessionId, levelId,telegramId,username },
+    try {
+      // фиксируем выбор уровня на бэке
+      await axios.post(`https://telsot.uz/game/choose-level`, {
+        sessionId,
+        telegramId,
+        level: levelId,
       });
 
-      // Передаём sessionId и выбранный levelId в Game
-
+      // переходим к игре
+      navigate("/game", {
+        state: { sessionId, levelId, telegramId, username },
+      });
     } catch (err) {
       console.error("Ошибка при выборе уровня:", err);
+      alert("Не удалось выбрать уровень. Попробуй снова!");
     }
   };
 
   return (
     <div className="flex flex-col items-center py-10 px-6">
-      <h1 className="text-white font-bold text-[24px] mb-8">Choose your level {sessionId}</h1>
+      <h1 className="text-white font-bold text-[24px] mb-8">
+        Choose your level {username}
+      </h1>
       <div className="grid grid-cols-2 gap-x-5 gap-y-6">
-        {levels?.map((level) => (
+        {levels.map((level) => (
           <div
             key={level.id}
-            className="relative w-[140px] h-[140px] rounded-2xl overflow-hidden cursor-pointer"
+            className="relative w-[140px] h-[140px] rounded-2xl overflow-hidden cursor-pointer transition-transform hover:scale-105"
             onClick={() => handleChoose(level.id)}
           >
             <img
@@ -68,7 +71,7 @@ const ChooseLevel = () => {
               alt={level.label}
               className="w-full h-full object-cover"
             />
-            <div className="absolute bottom-[10px] w-full text-center">
+            <div className="absolute bottom-[10px] w-full text-center bg-black/40">
               <p className="text-white text-[14px] font-semibold">
                 {level.label}
               </p>

@@ -14,41 +14,43 @@ const Start = () => {
   };
   const { telegramId, username, sessionId, chatId } = state;
 
-  const handleInvite = async () => {
-    try {
-      // 1. Создаём сессию через наш бэк
-      const res = await axios.post("https://telsot.uz/game/start", {
-        telegramId,
-        username,
-        chatId: chatId ?? `game_${telegramId}`, // если нет — фейковый
+const handleInvite = async () => {
+  try {
+    // chatId всегда один для группы (создатель = game_telegramId)
+    const groupChatId = chatId ?? `game_${telegramId}`;
+
+    // Создаём сессию для себя (но chatId общий)
+    const res = await axios.post("https://telsot.uz/game/start", {
+      telegramId,
+      username,
+      chatId: groupChatId,
+    });
+
+    const newSessionId = res.data.session_id;
+
+    // 👇 Вместо sessionId в ссылку передаём chatId
+    const gameUrl = `https://t.me/WordEngUz_bot?game=english&chatId=${groupChatId}`;
+    const text = `Hey! Join me in Word Quiz! 🕹️`;
+
+    const webLink = `https://t.me/share/url?url=${encodeURIComponent(
+      gameUrl
+    )}&text=${encodeURIComponent(text)}`;
+
+    if (navigator.share) {
+      await navigator.share({
+        title: "Word Quiz",
+        text,
+        url: gameUrl,
       });
-
-      const newSessionId = res.data.session_id;
-
-      // 2. Генерим ссылку для друга
-      const gameUrl = `https://t.me/WordEngUz_bot?game=english&session_id=${newSessionId}`;
-      const text = `Hey! Join me in Word Quiz! 🕹️`;
-
-      const webLink = `https://t.me/share/url?url=${encodeURIComponent(
-        gameUrl
-      )}&text=${encodeURIComponent(text)}`;
-
-      // 3. Пробуем нативный share
-      if (navigator.share) {
-        await navigator.share({
-          title: "Word Quiz",
-          text,
-          url: gameUrl,
-        });
-      } else {
-        // fallback — телеграм-шерилка
-        window.open(webLink, "_blank");
-      }
-    } catch (err) {
-      console.error("Ошибка при инвайте:", err);
-      alert("Не удалось создать приглашение 😔");
+    } else {
+      window.open(webLink, "_blank");
     }
-  };
+  } catch (err) {
+    console.error("Ошибка при инвайте:", err);
+    alert("Не удалось создать приглашение 😔");
+  }
+};
+
 
   return (
     <div className="flex flex-col items-center justify-center px-6">
