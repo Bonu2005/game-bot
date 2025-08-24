@@ -38,11 +38,10 @@ const ChooseLevel = () => {
 
     try {
       // фиксируем выбор уровня на бэке
-      await axios.post(`https://telsot.uz/game/choose-level`, {
-        sessionId,
-        telegramId,
-        level: levelId,
-      });
+      await axios.post(
+        `https://telsot.uz/game/choose-level?sessionId=${sessionId}&level=${levelId}`
+      );
+
 
       // переходим к игре
       navigate("/game", {
