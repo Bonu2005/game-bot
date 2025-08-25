@@ -5,15 +5,23 @@ import axios from "axios";
 import logo from "../../assets/imgs/Logo Example.svg";
 import loader from "../../assets/imgs/loader.png";
 
+type InitParams = {
+  user?: { id: number; username?: string };
+  chat?: { id: number };
+  chat_instance?: string;
+  inline_message_id?: string;
+};
 
 const API_URL = "https://telsot.uz/game"; // 👈 сюда твой бэкенд
 
 const Home = () => {
-   
+  const ip: InitParams = (window as any).TelegramGameProxy?.initParams || {};
+  const params = new URLSearchParams(window.location.search);
+  const user_id = params.get("user_id");
 
   const location = useLocation();
   const navigate = useNavigate();
-  const params = new URLSearchParams(location.search);
+  // const params = new URLSearchParams(location.search);
   const telegramId = params.get("telegramId");
   const username = params.get("username");
   const chatId = params.get("chatId");
@@ -45,6 +53,10 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
+      <p>{ip.user?.id}</p>
+      <p>{ip.user?.username}</p>
+      <p>{ip.chat?.id}</p>
+      <p>{user_id}</p>
       <div className="mb-[140px]">
         <img src={logo} alt="logo" />
       </div>
