@@ -53,10 +53,11 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <p>userId:{ip.user?.id}</p>
-      <p>{ip.user?.username}</p>
-      <p>{ip.chat?.id}</p>
-      <p>{user_id}</p>
+      <p className="bg-amber-50">userId:{ip.user?.id}</p>
+      <p  className="bg-amber-50">username:{ip.user?.username}</p>
+      <p  className="bg-amber-50">{ip.chat?.id}</p>
+      <p  className="bg-amber-50">{user_id}</p>
+      <p  className="bg-amber-50">{params.toString()}</p>
       <div className="mb-[140px]">
         <img src={logo} alt="logo" />
       </div>
