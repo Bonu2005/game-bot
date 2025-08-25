@@ -53,9 +53,9 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <p className="bg-amber-50">userId:{ip.user?.id}</p>
-      <p  className="bg-amber-50">username:{ip.user?.username}</p>
-      <p  className="bg-amber-50">{ip.chat?.id}</p>
+      <p className="bg-amber-50">userId:{telegramId}</p>
+      <p  className="bg-amber-50">username:{username}</p>
+      <p  className="bg-amber-50">{chatId}</p>
       <p  className="bg-amber-50">{user_id}</p>
       <p  className="bg-amber-50">{params.toString()}</p>
       <div className="mb-[140px]">
