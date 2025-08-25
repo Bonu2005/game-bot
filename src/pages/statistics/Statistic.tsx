@@ -78,7 +78,7 @@ const Statistic = () => {
     }
   };
 
-  if (loading) return <p className="text-white text-center mt-10">Loading...</p>;
+  if (loading) return <p className="text-white text-center mt-10">Loading... {state.chatId}</p>;
   if (error) return <p className="text-red-400 text-center mt-10">{error}</p>;
 
   return (
