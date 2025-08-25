@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import logo from "../../assets/imgs/Logo Example.svg";
@@ -19,7 +19,7 @@ const Home = () => {
   const params = new URLSearchParams(window.location.search);
   const user_id = params.get("user_id");
 
-  const location = useLocation();
+  // const location = useLocation();
   const navigate = useNavigate();
   // const params = new URLSearchParams(location.search);
   const telegramId = params.get("telegramId");
@@ -53,7 +53,7 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <p>{ip.user?.id}</p>
+      <p>userId:{ip.user?.id}</p>
       <p>{ip.user?.username}</p>
       <p>{ip.chat?.id}</p>
       <p>{user_id}</p>
