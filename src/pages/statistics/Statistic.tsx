@@ -25,13 +25,10 @@ const placeIcon = (place: number) => {
 };
 
 const Statistic = () => {
-
   const navigate = useNavigate();
   const location = useLocation();
 
-
   const state = location.state as { telegramId?: number; username?: string; sessionId?: string };
-
 
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +41,7 @@ const Statistic = () => {
         let url = "https://telsot.uz/game/leaderboard/global";
 
         if (state?.sessionId) {
-          // вытаскиваем инфу о сессии (чтобы понять chatId)
+          // получаем данные сессии (включая chatId)
           const resultRes = await axios.get("https://telsot.uz/game/result", {
             params: { sessionId: state.sessionId },
           });
@@ -60,11 +57,11 @@ const Statistic = () => {
 
         const arr: Player[] = Array.isArray(raw)
           ? raw.map((p: any) => ({
-            place: p.place,
-            username: p.username,
-            score: p.score,
-            level: p.bestLevel || "Unknown",
-          }))
+              place: p.place,
+              username: p.username,
+              score: p.score,
+              level: p.bestLevel || "Unknown",
+            }))
           : [];
 
         setPlayers(arr);
@@ -79,12 +76,10 @@ const Statistic = () => {
     fetchData();
   }, [state?.sessionId]);
 
-
   const handlePlayAgain = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
     try {
-
       const lastSessionRes = await axios.get(
         `https://telsot.uz/game/finddata?session_id=${state?.sessionId}`
       );
@@ -97,24 +92,28 @@ const Statistic = () => {
 
       const telegramId = lastSession.user.telegramId;
       const username = lastSession.user.username;
+      const chatId = lastSession.chatId; // ⚡ теперь пробрасываем чат!
 
       if (!telegramId || !username) {
         console.error("Telegram ID или username отсутствует");
         return;
       }
 
-      // 2. Создаём новую сессию на бэке
-      const res = await axios.post("https://telsot.uz/game/startGame", { telegramId, username });
+      // создаём новую сессию (передаём chatId, если он был)
+      const res = await axios.post("https://telsot.uz/game/startGame", {
+        telegramId,
+        username,
+        chatId: chatId || null,
+      });
+
       const newSessionId = res.data.session_id;
 
-      // 3. Перенаправляем в Start с новым sessionId
+      // редиректим в Start с новым sessionId
       navigate("/start", { state: { telegramId, username, sessionId: newSessionId } });
-
     } catch (err) {
       console.error("Ошибка при запуске новой игры:", err);
     }
   };
-
 
   const data = players.slice(0, visible);
 
@@ -123,11 +122,17 @@ const Statistic = () => {
 
   return (
     <div className="text-white pt-8 pb-6 px-4 flex flex-col items-center">
-      <h2 className="text-[20px] font-bold text-center mb-3">Leaders board {state.sessionId}</h2>
+      <h2 className="text-[20px] font-bold text-center mb-3">
+        Leaders board {state.sessionId}
+      </h2>
 
       <div className="flex items-center justify-center gap-2 mb-4">
-        <button className="bg-[#2DBE64] text-white text-sm px-4 py-1 rounded-full">All</button>
-        <button className="bg-[#2C2C2C] text-white text-sm px-4 py-1 rounded-full">Level</button>
+        <button className="bg-[#2DBE64] text-white text-sm px-4 py-1 rounded-full">
+          All
+        </button>
+        <button className="bg-[#2C2C2C] text-white text-sm px-4 py-1 rounded-full">
+          Level
+        </button>
       </div>
 
       <div className="space-y-3 w-[344px]">
@@ -138,18 +143,40 @@ const Statistic = () => {
           return (
             <div
               key={`${p.username}-${p.place}`}
-              className={`flex items-center justify-between px-4 py-3 rounded-xl ${isFirst ? "bg-[#2DBE64] text-white" : "bg-white text-black"}`}
+              className={`flex items-center justify-between px-4 py-3 rounded-xl ${
+                isFirst ? "bg-[#2DBE64] text-white" : "bg-white text-black"
+              }`}
             >
               <div className="flex items-center gap-3">
                 <div className="w-6 h-6 flex items-center justify-center">
-                  {medal ? <span className="text-lg">{medal}</span> : <span className="text-sm font-bold">{p.place}</span>}
+                  {medal ? (
+                    <span className="text-lg">{medal}</span>
+                  ) : (
+                    <span className="text-sm font-bold">{p.place}</span>
+                  )}
                 </div>
                 <div className="leading-tight">
-                  <p className={`text-sm font-semibold ${isFirst ? "text-white" : "text-black"}`}>{p.username}</p>
-                  <p className={`text-xs ${isFirst ? "text-white/90" : "text-gray-500"}`}>{p.level || "Unknown"}</p>
+                  <p
+                    className={`text-sm font-semibold ${
+                      isFirst ? "text-white" : "text-black"
+                    }`}
+                  >
+                    {p.username}
+                  </p>
+                  <p
+                    className={`text-xs ${
+                      isFirst ? "text-white/90" : "text-gray-500"
+                    }`}
+                  >
+                    {p.level || "Unknown"}
+                  </p>
                 </div>
               </div>
-              <div className={`flex items-center gap-1.5 text-sm font-bold ${isFirst ? "text-white" : "text-black"}`}>
+              <div
+                className={`flex items-center gap-1.5 text-sm font-bold ${
+                  isFirst ? "text-white" : "text-black"
+                }`}
+              >
                 <span>{p.score}</span>
                 {COIN_SVG}
               </div>
@@ -160,7 +187,11 @@ const Statistic = () => {
 
       <div
         className="mt-4 text-center text-blue-400 text-sm cursor-pointer select-none"
-        onClick={() => setVisible((v) => (v >= players.length ? 5 : Math.min(players.length, v + 5)))}
+        onClick={() =>
+          setVisible((v) =>
+            v >= players.length ? 5 : Math.min(players.length, v + 5)
+          )
+        }
       >
         {visible >= players.length ? "Show less" : "Show more"}
       </div>
