@@ -43,14 +43,17 @@ const Statistic = () => {
 
         const data = res.data;
 
-        // Берём **только первого игрока из чата**
         if (data && data.length > 0) {
+          // берем только первого игрока в чате
+          const top = data[0];
           setPlayer({
-            place: data[0].place,
-            username: data[0].username,
-            score: data[0].score,
-            level: data[0].bestLevel || "Unknown",
+            place: top.place,
+            username: top.username,
+            score: top.score,
+            level: top.bestLevel || "Unknown",
           });
+        } else {
+          setError("No leaderboard data available");
         }
       } catch (err) {
         console.error(err);
