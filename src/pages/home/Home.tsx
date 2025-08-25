@@ -25,18 +25,18 @@ const Home = () => {
 
   useEffect(() => {
     const startGame = async () => {
-      if (!telegramId || !username) return;
-
+     
       try {
         const res = await axios.post(`${API_URL}/start`, {
           telegramId,
           username,
-          chatId, // может быть null
+          chatId
+
         });
 
         const { session_id } = res.data;
 
-        // редиректим на /start
+       
         navigate("/start", {
           state: { telegramId, username, sessionId: session_id, chatId },
         });
@@ -50,11 +50,6 @@ const Home = () => {
 
   return (
     <div className="flex flex-col items-center justify-center">
-      <p className="bg-amber-50">userId:{telegramId}</p>
-      <p className="bg-amber-50">username:{username}</p>
-      <p className="bg-amber-50">{chatId}</p>
-
-      <p className="bg-amber-50">{params.toString()}</p>
       <div className="mb-[140px]">
         <img src={logo} alt="logo" />
       </div>
