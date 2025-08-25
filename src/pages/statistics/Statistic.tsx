@@ -27,8 +27,7 @@ const placeIcon = (place: number) => {
 const Statistic = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const state = location.state as { telegramId?: number; username?: string; sessionId?: string };
+  const state = location.state as { telegramId?: number; username?: string; chatId: string };
 
   const [player, setPlayer] = useState<Player | null>(null);
   const [loading, setLoading] = useState(true);
@@ -36,31 +35,33 @@ const Statistic = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!state?.sessionId) return;
+      if (!state?.chatId) return;
       try {
-        const res = await axios.get("https://telsot.uz/game/result", {
-          params: { sessionId: state.sessionId },
+        const res = await axios.get("https://telsot.uz/game/leaderboard/chat", {
+          params: { chatId: state.chatId },
         });
 
         const data = res.data;
 
-        // создаем "игрока" с place = 1
-        setPlayer({
-          place: 1,
-          username: data.username,
-          score: data.total_score,
-          level: data.level || "Unknown",
-        });
+        // Берём **только первого игрока из чата**
+        if (data && data.length > 0) {
+          setPlayer({
+            place: data[0].place,
+            username: data[0].username,
+            score: data[0].score,
+            level: data[0].bestLevel || "Unknown",
+          });
+        }
       } catch (err) {
         console.error(err);
-        setError("Не удалось загрузить результат");
+        setError("Failed to load leaderboard");
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-  }, [state?.sessionId]);
+  }, [state?.chatId]);
 
   const handlePlayAgain = async () => {
     if (!state?.telegramId || !state?.username) return;
@@ -73,7 +74,7 @@ const Statistic = () => {
       const newSessionId = res.data.session_id;
       navigate("/start", { state: { telegramId: state.telegramId, username: state.username, sessionId: newSessionId } });
     } catch (err) {
-      console.error("Ошибка при запуске новой игры:", err);
+      console.error("Error starting new game:", err);
     }
   };
 
@@ -82,10 +83,10 @@ const Statistic = () => {
 
   return (
     <div className="text-white pt-8 pb-6 px-4 flex flex-col items-center">
-      <h2 className="text-[20px] font-bold text-center mb-3">Ваш результат</h2>
+      <h2 className="text-[20px] font-bold text-center mb-3">Leaderboard Top Player</h2>
 
       {player && (
-        <div className={`flex items-center justify-between px-4 py-3 rounded-xl bg-[#2DBE64] text-white w-[344px]`}>
+        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-[#2DBE64] text-white w-[344px]">
           <div className="flex items-center gap-3">
             <div className="w-6 h-6 flex items-center justify-center">
               <span className="text-lg">{placeIcon(player.place)}</span>
@@ -107,7 +108,7 @@ const Statistic = () => {
           onClick={handlePlayAgain}
           className="bg-[#FFA500] text-white font-semibold rounded-full px-6 py-3 w-[344px] text-center"
         >
-          Играть снова
+          Play Again
         </button>
       </div>
     </div>

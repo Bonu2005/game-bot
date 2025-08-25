@@ -10,8 +10,9 @@ const Game = () => {
     levelId: number;
     telegramId: number;
     username: string;
+    chatId:string
   };
-  const { sessionId, telegramId, username } = state || {};
+  const { sessionId, telegramId, username ,chatId} = state || {};
 
   const [wordId, setWordId] = useState<string | null>(null);
   const [word, setWord] = useState<string | null>(null);
@@ -43,7 +44,7 @@ const Game = () => {
         res.data.message === "Time is up. Game ended." ||
         res.data.message === "No more words available. Game ended."
       ) {
-        navigate("/statistic", { state: { sessionId, telegramId, username } });
+        navigate("/statistic", { state: { sessionId, telegramId, username,chatId } });
         return;
       }
 

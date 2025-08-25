@@ -16,7 +16,6 @@ const Start = () => {
 
   const { telegramId, username, chatId: initialChatId } = state;
 
-  // Используем локальный стейт для актуализации sessionId и chatId
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(state.sessionId);
   const [currentChatId, setCurrentChatId] = useState<string | undefined>(initialChatId);
 
