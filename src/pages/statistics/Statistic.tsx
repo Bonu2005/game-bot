@@ -100,7 +100,7 @@ const Statistic = () => {
 
   const data = players.slice(0, visible);
 
-  if (loading) return <p className="text-white text-center mt-10">Loading...</p>;
+  if (loading) return <p className="text-white text-center mt-10">Loading...{state.sessionId}</p>;
   if (error) return <p className="text-red-400 text-center mt-10">{error}</p>;
 
   return (
