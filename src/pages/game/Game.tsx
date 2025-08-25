@@ -158,17 +158,24 @@ const Game = () => {
 
       <div className="w-full space-y-4">
         {options.map((ans, index) => {
+          // базовый стиль кнопки
           let bgClass = "bg-[#2C3A4D] hover:bg-[#36495f]";
-          if (selectedAnswer) {
+
+          // если есть выбранный ответ и сервер вернул результат
+          if (selectedAnswer && isCorrect !== null) {
             if (ans === selectedAnswer) {
               bgClass = isCorrect ? "bg-green-500" : "bg-red-500";
+            }
+            // подсветить правильный ответ после выбора (опционально)
+            else if (!isCorrect && ans === word) {
+              bgClass = "bg-green-500";
             }
           }
 
           return (
             <button
               key={index}
-              disabled={disabled}
+              disabled={disabled || (selectedAnswer !== null && isCorrect !== null)}
               onClick={() => handleAnswer(ans)}
               className={`w-full py-4 rounded-xl text-white text-[16px] font-semibold transition ${bgClass}`}
             >
@@ -177,6 +184,7 @@ const Game = () => {
           );
         })}
       </div>
+
     </div>
   );
 };
