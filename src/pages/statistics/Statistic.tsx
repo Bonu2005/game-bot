@@ -30,44 +30,30 @@ const Statistic = () => {
 
   const state = location.state as { telegramId?: number; username?: string; sessionId?: string };
 
-  const [players, setPlayers] = useState<Player[]>([]);
+  const [player, setPlayer] = useState<Player | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [visible, setVisible] = useState(5);
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!state?.sessionId) return;
       try {
-        let url = "https://telsot.uz/game/leaderboard/global";
+        const res = await axios.get("https://telsot.uz/game/result", {
+          params: { sessionId: state.sessionId },
+        });
 
-        if (state?.sessionId) {
-          // получаем данные сессии (включая chatId)
-          const resultRes = await axios.get("https://telsot.uz/game/result", {
-            params: { sessionId: state.sessionId },
-          });
+        const data = res.data;
 
-          const chatId = resultRes.data?.chatId;
-          if (chatId) {
-            url = `https://telsot.uz/game/leaderboard/chat?chatId=${chatId}`;
-          }
-        }
-
-        const lbRes = await axios.get(url);
-        const raw = lbRes.data;
-
-        const arr: Player[] = Array.isArray(raw)
-          ? raw.map((p: any) => ({
-              place: p.place,
-              username: p.username,
-              score: p.score,
-              level: p.bestLevel || "Unknown",
-            }))
-          : [];
-
-        setPlayers(arr);
-      } catch (e) {
-        console.error(e);
-        setError("Не удалось загрузить статистику");
+        // создаем "игрока" с place = 1
+        setPlayer({
+          place: 1,
+          username: data.username,
+          score: data.total_score,
+          level: data.level || "Unknown",
+        });
+      } catch (err) {
+        console.error(err);
+        setError("Не удалось загрузить результат");
       } finally {
         setLoading(false);
       }
@@ -76,115 +62,52 @@ const Statistic = () => {
     fetchData();
   }, [state?.sessionId]);
 
-  const handlePlayAgain = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-
+  const handlePlayAgain = async () => {
+    if (!state?.telegramId || !state?.username) return;
     try {
-
-
-      
       const res = await axios.post("https://telsot.uz/game/start", {
-        telegramId:state.telegramId,
-        username:state.username,
-        chatId:  null,
+        telegramId: state.telegramId,
+        username: state.username,
+        chatId: null,
       });
-
       const newSessionId = res.data.session_id;
-
-      // редиректим в Start с новым sessionId
-      navigate("/start", { state: { telegramId:state.telegramId, username:state.username, sessionId: newSessionId } });
+      navigate("/start", { state: { telegramId: state.telegramId, username: state.username, sessionId: newSessionId } });
     } catch (err) {
       console.error("Ошибка при запуске новой игры:", err);
     }
   };
-
-  const data = players.slice(0, visible);
 
   if (loading) return <p className="text-white text-center mt-10">Loading...</p>;
   if (error) return <p className="text-red-400 text-center mt-10">{error}</p>;
 
   return (
     <div className="text-white pt-8 pb-6 px-4 flex flex-col items-center">
-      <h2 className="text-[20px] font-bold text-center mb-3">
-        Leaders board {state.sessionId}
-      </h2>
+      <h2 className="text-[20px] font-bold text-center mb-3">Ваш результат</h2>
 
-      <div className="flex items-center justify-center gap-2 mb-4">
-        <button className="bg-[#2DBE64] text-white text-sm px-4 py-1 rounded-full">
-          All
-        </button>
-        <button className="bg-[#2C2C2C] text-white text-sm px-4 py-1 rounded-full">
-          Level
-        </button>
-      </div>
-
-      <div className="space-y-3 w-[344px]">
-        {data.map((p) => {
-          const isFirst = p.place === 1;
-          const medal = placeIcon(p.place);
-
-          return (
-            <div
-              key={`${p.username}-${p.place}`}
-              className={`flex items-center justify-between px-4 py-3 rounded-xl ${
-                isFirst ? "bg-[#2DBE64] text-white" : "bg-white text-black"
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                <div className="w-6 h-6 flex items-center justify-center">
-                  {medal ? (
-                    <span className="text-lg">{medal}</span>
-                  ) : (
-                    <span className="text-sm font-bold">{p.place}</span>
-                  )}
-                </div>
-                <div className="leading-tight">
-                  <p
-                    className={`text-sm font-semibold ${
-                      isFirst ? "text-white" : "text-black"
-                    }`}
-                  >
-                    {p.username}
-                  </p>
-                  <p
-                    className={`text-xs ${
-                      isFirst ? "text-white/90" : "text-gray-500"
-                    }`}
-                  >
-                    {p.level || "Unknown"}
-                  </p>
-                </div>
-              </div>
-              <div
-                className={`flex items-center gap-1.5 text-sm font-bold ${
-                  isFirst ? "text-white" : "text-black"
-                }`}
-              >
-                <span>{p.score}</span>
-                {COIN_SVG}
-              </div>
+      {player && (
+        <div className={`flex items-center justify-between px-4 py-3 rounded-xl bg-[#2DBE64] text-white w-[344px]`}>
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 flex items-center justify-center">
+              <span className="text-lg">{placeIcon(player.place)}</span>
             </div>
-          );
-        })}
-      </div>
-
-      <div
-        className="mt-4 text-center text-blue-400 text-sm cursor-pointer select-none"
-        onClick={() =>
-          setVisible((v) =>
-            v >= players.length ? 5 : Math.min(players.length, v + 5)
-          )
-        }
-      >
-        {visible >= players.length ? "Show less" : "Show more"}
-      </div>
+            <div className="leading-tight">
+              <p className="text-sm font-semibold">{player.username}</p>
+              <p className="text-xs text-white/90">{player.level}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-1.5 text-sm font-bold">
+            <span>{player.score}</span>
+            {COIN_SVG}
+          </div>
+        </div>
+      )}
 
       <div className="mt-8 flex justify-center w-[344px]">
         <button
           onClick={handlePlayAgain}
           className="bg-[#FFA500] text-white font-semibold rounded-full px-6 py-3 w-[344px] text-center"
         >
-          Play again
+          Играть снова
         </button>
       </div>
     </div>
