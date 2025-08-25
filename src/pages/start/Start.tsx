@@ -4,8 +4,10 @@ import axios from "axios";
 import image3 from "../../assets/imgs/image 3.svg";
 import shareplay from "../../assets/imgs/shareplay.svg";
 import play from "../../assets/imgs/play.circle.fill.svg";
+import { useTelegram } from "../../hooks/UseTelegram";
 
 const Start = () => {
+  const { userId } = useTelegram();
   const location = useLocation();
   const state = location.state as {
     telegramId?: string;
@@ -63,10 +65,10 @@ const Start = () => {
   return (
     <div className="flex flex-col items-center justify-center px-6">
       <h1 className="text-white font-bold text-[24px] mb-6">
-        Word Quiz
+        Word Quiz {userId}
       </h1>
 
-    
+
 
       <img src={image3} alt="Quiz" className="w-[220px] h-auto mb-10" />
 
