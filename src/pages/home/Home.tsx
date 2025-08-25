@@ -4,12 +4,12 @@ import axios from "axios";
 
 import logo from "../../assets/imgs/Logo Example.svg";
 import loader from "../../assets/imgs/loader.png";
-import { useTelegram } from "../../hooks/UseTelegram";
+
 
 const API_URL = "https://telsot.uz/game"; // 👈 сюда твой бэкенд
 
 const Home = () => {
-    const { userId } = useTelegram();
+   
 
   const location = useLocation();
   const navigate = useNavigate();
