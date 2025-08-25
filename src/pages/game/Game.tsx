@@ -31,6 +31,7 @@ const Game = () => {
   // 📥 получить вопрос
   const fetchNextWord = async () => {
     try {
+
       setLoading(true);
       setSelectedAnswer(null);
       setIsCorrect(null);
@@ -38,14 +39,17 @@ const Game = () => {
       const res = await axios.get("https://telsot.uz/game/next-word", {
         params: { sessionId },
       });
+      const diff = res.data.deadlineMs - Date.now();
 
-if (
-  res.data.message === "Time is up. Game ended." ||
-  res.data.message === "No more words available. Game ended."
-) {
-  navigate("/statistic", { state: { sessionId, telegramId, username } });
-  return;
-}
+
+
+      if (
+        res.data.message === "Time is up. Game ended." ||
+        res.data.message === "No more words available. Game ended."
+      ) {
+        navigate("/statistic", { state: { sessionId, telegramId, username } });
+        return;
+      }
 
 
       setWordId(res.data.word_id);
@@ -53,7 +57,7 @@ if (
       setOptions(res.data.options);
 
       setDeadline(res.data.deadlineMs);
-      setTimeLeft(res.data.deadlineMs - Date.now());
+      setTimeLeft(Math.max(0, diff));
     } catch (err) {
       console.error("Ошибка при получении слова:", err);
     } finally {
@@ -98,12 +102,12 @@ if (
   // ⏱ серверный дедлайн
   useEffect(() => {
     const tick = () => {
-      const left = deadline - Date.now();
+      const left = Math.max(0, deadline - Date.now());
+      setTimeLeft(left);
       if (left <= 0) {
         navigate("/statistic", { state: { sessionId, telegramId, username } });
-        return;
       }
-      setTimeLeft(left);
+
     };
 
     const timer = setInterval(tick, 50);
