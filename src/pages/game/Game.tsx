@@ -21,7 +21,7 @@ const Game = () => {
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [loading, setLoading] = useState(true);
   const [disabled, setDisabled] = useState(false);
-  const [deadline, setDeadline] = useState<number>(0);
+  const [deadline, setDeadline] = useState<number>(0); // локальный дедлайн
 
   if (!sessionId) {
     navigate("/");
@@ -31,7 +31,6 @@ const Game = () => {
   // 📥 получить вопрос
   const fetchNextWord = async () => {
     try {
-
       setLoading(true);
       setSelectedAnswer(null);
       setIsCorrect(null);
@@ -39,9 +38,6 @@ const Game = () => {
       const res = await axios.get("https://telsot.uz/game/next-word", {
         params: { sessionId },
       });
-      const diff = res.data.deadlineMs - Date.now();
-
-
 
       if (
         res.data.message === "Time is up. Game ended." ||
@@ -51,13 +47,16 @@ const Game = () => {
         return;
       }
 
+      // берём лимит времени с бэка
+      const timeLimitMs = res.data.timeLimitMs || 5000;
+      const newDeadline = Date.now() + timeLimitMs;
 
       setWordId(res.data.word_id);
       setWord(res.data.word_en);
       setOptions(res.data.options);
 
-      setDeadline(res.data.deadlineMs);
-      setTimeLeft(Math.max(0, diff));
+      setDeadline(newDeadline);
+      setTimeLeft(timeLimitMs);
     } catch (err) {
       console.error("Ошибка при получении слова:", err);
     } finally {
@@ -99,15 +98,16 @@ const Game = () => {
     }
   };
 
-  // ⏱ серверный дедлайн
+  // ⏱ локальный таймер
   useEffect(() => {
+    if (!deadline) return;
+
     const tick = () => {
       const left = Math.max(0, deadline - Date.now());
       setTimeLeft(left);
       if (left <= 0) {
         navigate("/statistic", { state: { sessionId, telegramId, username } });
       }
-
     };
 
     const timer = setInterval(tick, 50);
