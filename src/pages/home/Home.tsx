@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import logo from "../../assets/imgs/Logo Example.svg";
@@ -17,11 +17,9 @@ const API_URL = "https://telsot.uz/game"; // 👈 сюда твой бэкенд
 const Home = () => {
   const ip: InitParams = (window as any).TelegramGameProxy?.initParams || {};
   const params = new URLSearchParams(window.location.search);
-  const user_id = params.get("user_id");
-
-  // const location = useLocation();
+ 
+  const location = useLocation();
   const navigate = useNavigate();
-
   const telegramId = params.get("user_id");
   const username = params.get("username");
   const chatId = params.get("chat_id");
@@ -56,7 +54,7 @@ const Home = () => {
       <p className="bg-amber-50">userId:{telegramId}</p>
       <p  className="bg-amber-50">username:{username}</p>
       <p  className="bg-amber-50">{chatId}</p>
-      <p  className="bg-amber-50">{user_id}</p>
+    
       <p  className="bg-amber-50">{params.toString()}</p>
       <div className="mb-[140px]">
         <img src={logo} alt="logo" />
