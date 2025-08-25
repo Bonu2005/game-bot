@@ -80,36 +80,19 @@ const Statistic = () => {
     e.preventDefault();
 
     try {
-      const lastSessionRes = await axios.get(
-        `https://telsot.uz/game/finddata?session_id=${state?.sessionId}`
-      );
 
-      const lastSession = lastSessionRes.data.findUs;
-      if (!lastSession || !lastSession.user) {
-        console.error("Не удалось получить пользователя из последней сессии");
-        return;
-      }
-
-      const telegramId = lastSession.user.telegramId;
-      const username = lastSession.user.username;
-      const chatId = lastSession.chatId; // ⚡ теперь пробрасываем чат!
-
-      if (!telegramId || !username) {
-        console.error("Telegram ID или username отсутствует");
-        return;
-      }
 
       // создаём новую сессию (передаём chatId, если он был)
       const res = await axios.post("https://telsot.uz/game/start", {
-        telegramId,
-        username,
-        chatId: chatId || null,
+        telegramId:state.telegramId,
+        username:state.username,
+        chatId:  null,
       });
 
       const newSessionId = res.data.session_id;
 
       // редиректим в Start с новым sessionId
-      navigate("/start", { state: { telegramId, username, sessionId: newSessionId } });
+      navigate("/start", { state: { telegramId:state.telegramId, username:state.username, sessionId: newSessionId } });
     } catch (err) {
       console.error("Ошибка при запуске новой игры:", err);
     }
