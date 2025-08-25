@@ -70,7 +70,7 @@ if (
 
     const timeTaken = Math.floor((deadline - Date.now()) / 1000);
     try {
-      const res = await axios.post("https://telsot.uz/game/submit-answer", {
+      const res = await axios.post("https://telsot.uz/game/submit", {
         session_id: sessionId,
         word_id: wordId,
         selected: answer,
