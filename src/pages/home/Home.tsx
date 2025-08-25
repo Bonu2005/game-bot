@@ -17,12 +17,10 @@ const API_URL = "https://telsot.uz/game"; // 👈 сюда твой бэкенд
 const Home = () => {
   const ip: InitParams = (window as any).TelegramGameProxy?.initParams || {};
   const params = new URLSearchParams(window.location.search);
- 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const telegramId = params.get("user_id");
-  const username = params.get("username");
-  const chatId = params.get("chat_id");
+  const telegramId = ip.user?.id || params.get("user_id");
+  const username = ip.user?.username || ip.user?.username || params.get("username");
+  const chatId = ip.chat?.id || params.get("chat_id");
+
 
   useEffect(() => {
     const startGame = async () => {
@@ -52,10 +50,10 @@ const Home = () => {
   return (
     <div className="flex flex-col items-center justify-center">
       <p className="bg-amber-50">userId:{telegramId}</p>
-      <p  className="bg-amber-50">username:{username}</p>
-      <p  className="bg-amber-50">{chatId}</p>
-    
-      <p  className="bg-amber-50">{params.toString()}</p>
+      <p className="bg-amber-50">username:{username}</p>
+      <p className="bg-amber-50">{chatId}</p>
+
+      <p className="bg-amber-50">{params.toString()}</p>
       <div className="mb-[140px]">
         <img src={logo} alt="logo" />
       </div>
