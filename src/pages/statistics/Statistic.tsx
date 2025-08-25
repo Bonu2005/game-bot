@@ -100,7 +100,7 @@ const Statistic = () => {
       }
 
       // создаём новую сессию (передаём chatId, если он был)
-      const res = await axios.post("https://telsot.uz/game/startGame", {
+      const res = await axios.post("https://telsot.uz/game/start", {
         telegramId,
         username,
         chatId: chatId || null,
