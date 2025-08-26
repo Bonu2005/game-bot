@@ -25,20 +25,25 @@ const Home = () => {
 
   useEffect(() => {
     const startGame = async () => {
+      const ip: InitParams = (window as any).TelegramGameProxy?.initParams || {};
+      const telegramId = ip.user?.id;
+      const username = ip.user?.username;
+      const chatId = ip.chat?.id || null;
+
+      if (!telegramId) return; // ждем инициализации
 
       try {
-        const res = await axios.post(`${API_URL}/start`, {
-          telegramId,
-          username,
-          chatId
+        const res = await axios.post(`${API_URL}/start`, { telegramId, username, chatId });
 
-        });
+        // Telegram.WebApp отправляем данные
+        if ((window as any).Telegram?.WebApp?.sendData) {
+          (window as any).Telegram.WebApp.sendData(JSON.stringify(res.data));
+        }
 
-       
-        setSession(res.data)
-
+        // навигация на старт внутри WebApp
         navigate("/start", {
-          state: { telegramId, username, chatId },
+          state: { telegramId, username, chatId, sessionId: res.data.session_id },
+          replace: true,
         });
       } catch (err) {
         console.error("Ошибка при старте игры:", err);
@@ -46,7 +51,8 @@ const Home = () => {
     };
 
     startGame();
-  }, [telegramId, username, chatId, navigate]);
+  }, [navigate]);
+
 
   return (
     <div className="flex flex-col items-center justify-center">
