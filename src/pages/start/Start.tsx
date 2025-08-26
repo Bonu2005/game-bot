@@ -19,6 +19,7 @@ const Start = () => {
   } || {};
 
   const { telegramId, username, chatId: initialChatId,inline_message_id,message_id } = state;
+console.log(telegramId,username,inline_message_id,message_id);
 
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(state.sessionId);
   const [currentChatId, setCurrentChatId] = useState<string | undefined>(initialChatId);
