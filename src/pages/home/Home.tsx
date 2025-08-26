@@ -15,38 +15,40 @@ type InitParams = {
 const API_URL = "https://telsot.uz/game"; // 👈 сюда твой бэкенд
 
 const Home = () => {
-  const ip: InitParams = (window as any).TelegramGameProxy?.initParams || {};
-   const navigate = useNavigate();
-  const params = new URLSearchParams(window.location.search);
-  const telegramId = ip.user?.id || params.get("user_id");
-  const username = ip.user?.username || ip.user?.username || params.get("username");
-  const chatId = ip.chat?.id || params.get("chat_id");
-
-
   useEffect(() => {
-    const startGame = async () => {
-     
-      try {
-        const res = await axios.post(`${API_URL}/start`, {
-          telegramId,
-          username,
-          chatId
+  const checkTelegramInit = () => {
+    const ip: InitParams = (window as any).TelegramGameProxy?.initParams || {};
+    if (!ip.user?.id) {
+      // если Telegram ещё не инициализирован — пробуем снова через 100мс
+      setTimeout(checkTelegramInit, 100);
+      return;
+    }
 
-        });
+    startGame(ip);
+  };
 
-        const { session_id } = res.data;
+  const startGame = async (ip: InitParams) => {
+    const navigate = useNavigate()
+    const telegramId = ip.user?.id;
+    const username = ip.user?.username;
+    const chatId = ip.chat?.id || null;
 
-       
-        navigate("/start", {
-          state: { telegramId, username, sessionId: session_id, chatId },
-        });
-      } catch (err) {
-        console.error("Ошибка при старте игры:", err);
-      }
-    };
+    try {
+      const res = await axios.post(`${API_URL}/start`, { telegramId, username, chatId });
+      const { session_id } = res.data;
 
-    startGame();
-  }, [telegramId, username, chatId, navigate]);
+      navigate("/start", {
+        state: { telegramId, username, sessionId: session_id, chatId },
+        replace: true,
+      });
+    } catch (err) {
+      console.error("Ошибка при старте игры:", err);
+    }
+  };
+
+  checkTelegramInit();
+}, []);
+
 
   return (
     <div className="flex flex-col items-center justify-center">
