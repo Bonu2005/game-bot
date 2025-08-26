@@ -34,7 +34,7 @@ const Statistic = () => {
           messageId:state.message_id,
           inline_messageId: state.inline_message_id,
         });
-        console.log("Сообщение отправлено в чат");
+        console.log(state.chatId,state.inline_message_id);
       } catch (err) {
         console.error("Ошибка при отправке сообщения в чат:", err);
       } finally {
