@@ -33,8 +33,7 @@ const Home = () => {
           chatId,
         });
 
-        console.log("Response data:", res.data);
-        setSession(res.data.session_id);
+        setSession(res.config.data);
         alert(JSON.stringify(res.headers)); // показывает данные в окне WebApp
 
         navigate("/start", {
