@@ -25,7 +25,6 @@ const Start = () => {
 
   const handleInvite = async () => {
     if (!telegramId || !username) {
-      alert("Недостаточно данных для приглашения.");
       return;
     }
 
