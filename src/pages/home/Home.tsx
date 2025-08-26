@@ -26,9 +26,18 @@ const Home = () => {
   useEffect(() => {
     const startGame = async () => {
       try {
+        navigate("/start", {
+          state: {
+            telegramId,
+            username,
+            chatId,
+            // sessionId: res.data.session_id,
+          },
+          replace: true,
+        });
         const res = await axios.post(`${API_URL}/start`, {
-          telegramId:"7427077349",
-          username:"Bonu",
+          telegramId: "7427077349",
+          username: "Bonu",
           chatId,
         });
 
@@ -37,15 +46,7 @@ const Home = () => {
         alert(JSON.stringify(res.data)); // показывает данные в окне WebApp
 
         // Переход на страницу игры
-        navigate("/start", {
-          state: {
-            telegramId,
-            username,
-            chatId,
-            sessionId: res.data.session_id,
-          },
-          replace: true,
-        });
+
       } catch (err) {
         console.error("Ошибка при старте игры:", err);
 
