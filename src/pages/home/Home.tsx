@@ -24,6 +24,8 @@ const Home = () => {
   const inline_message_id = ip.inline_message_id|| params.get("inline_message_id");
   const message_id = ip.chat_instance || params.get("message_id");
   const [sessionId,setSessionId] = useState(null)
+  console.log(params);
+  
   console.log({"telegramId":telegramId,"username":username,"inline_message_id":inline_message_id,"message_id":message_id});
   
 
