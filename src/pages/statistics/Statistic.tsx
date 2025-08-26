@@ -34,7 +34,7 @@ const Leaderboard = () => {
       );
 
       // ⏩ редирект в старт
-      navigate(`/start?telegramId=${state.telegramId}&username=${state.username}&sessionId=${newSession.data.session_id}&chatId=${state.chatId ?? ""}&inline_message_id=${state.inline_message_id}&message_id=${state.message_id}`);
+      navigate(`/start?telegramId=${state.telegramId}&username=${state.username}&sessionId=${newSession.session_id}&chatId=${state.chatId ?? ""}&inline_message_id=${state.inline_message_id}&message_id=${state.message_id}`);
     } catch (err) {
       console.error("Ошибка при старте новой игры:", err);
     }
