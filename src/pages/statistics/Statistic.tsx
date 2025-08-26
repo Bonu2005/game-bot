@@ -44,10 +44,8 @@ const Statistic = () => {
         setLoading(false);
       }
     };
+ sendMessageToChat();
 
-    if (state?.chatId) {
-      sendMessageToChat();
-    }
   }, [state]);
 
   if (loading) return <p className="text-white text-center mt-10">Loading...</p>;
