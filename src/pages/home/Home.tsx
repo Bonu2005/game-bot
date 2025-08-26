@@ -27,8 +27,8 @@ const Home = () => {
     const startGame = async () => {
       try {
         const res = await axios.post(`${API_URL}/start`, {
-          telegramId,
-          username,
+          telegramId:"7427077349",
+          username:"Bonu",
           chatId,
         });
 
