@@ -66,7 +66,7 @@ const Leaderboard = () => {
 
         // 3. Берём топ игроков
         const { data: top } = await axios.get(
-          "https://telsot.uz/game/top-players"
+          "https://telsot.uz/game/top"
         );
         setPlayers(top);
       } catch (err) {
