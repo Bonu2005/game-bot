@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 import beginner from "../../assets/imgs/beginner.svg";
@@ -19,21 +19,18 @@ const levels = [
 
 const ChooseLevel = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  console.log(params);
 
-  const state = location.state as {
-    sessionId?: string;
-    telegramId?: number;
-    username?: string;
-    chatId?: string,
-    inline_message_id: string,
-    message_id: string
-  };
-
-  const { sessionId, telegramId, username, chatId,inline_message_id,message_id } = state || {};
+  const telegramId = params.get("telegramId") || undefined;
+  const username = params.get("username") || undefined;
+  const sessionIdParam = params.get("sessionId") || undefined;
+  const chatId = params.get("chatId") || null;
+  const inline_message_id = params.get("inline_message_id") || "";
+  const message_id = params.get("message_id") || "";
 
   const handleChoose = async (levelId: number) => {
-    if (!sessionId || !telegramId) {
+    if (!sessionIdParam || !telegramId) {
       alert("⚠️ Ошибка: нет активной игровой сессии");
       navigate("/");
       return;
@@ -42,14 +39,16 @@ const ChooseLevel = () => {
     try {
       // фиксируем выбор уровня на бэке
       await axios.post(
-        `https://telsot.uz/game/choose-level?sessionId=${sessionId}&level=${levelId}`
+        `https://telsot.uz/game/choose-level?sessionId=${sessionIdParam}&level=${levelId}`
       );
 
 
       // переходим к игре
       navigate("/game", {
-        state: { sessionId, levelId, telegramId, username, chatId , inline_message_id,
-            message_id},
+        state: {
+          sessionId:sessionIdParam, levelId, telegramId, username, chatId, inline_message_id,
+          message_id
+        },
       });
     } catch (err) {
       console.error("Ошибка при выборе уровня:", err);
