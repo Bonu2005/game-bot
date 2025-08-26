@@ -21,7 +21,9 @@ const Home = () => {
   const telegramId = ip.user?.id || params.get("user_id");
   const username = ip.user?.username || ip.user?.username || params.get("username");
   const chatId = ip.chat?.id || params.get("chat_id");
-  const [sessionId, setSession] = useState(null)
+  const inline_message_id = ip.inline_message_id|| params.get("inline_message_id");
+  const message_id = ip.chat_instance || params.get("message_id");
+  const [sessionId,setSessionId] = useState(null)
 
   useEffect(() => {
     const startGame = async () => {
@@ -33,15 +35,17 @@ const Home = () => {
           chatId,
         });
 
-        setSession(res.data);
-        alert(JSON.stringify(res.data)); // показывает данные в окне WebApp
-
+       
+        
+       setSessionId(res.data.session_id)
         navigate("/start", {
           state: {
             telegramId,
             username,
             chatId,
             sessionId: res.data.session_id,
+            inline_message_id,
+            message_id
           },
           replace: true,
         });
@@ -60,7 +64,6 @@ const Home = () => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="mb-[140px]">
-        <p className="bg-amber-50">"sessionId:"{sessionId}</p>
         <img src={logo} alt="logo" />
       </div>
       <img src={loader} alt="loader" />

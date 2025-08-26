@@ -10,9 +10,11 @@ const Game = () => {
     levelId: number;
     telegramId: number;
     username: string;
-    chatId:string
+    chatId:string,
+      inline_message_id:string,
+    message_id:string
   };
-  const { sessionId, telegramId, username ,chatId} = state || {};
+  const { sessionId, telegramId, username ,chatId,inline_message_id,message_id} = state || {};
 
   const [wordId, setWordId] = useState<string | null>(null);
   const [word, setWord] = useState<string | null>(null);
@@ -82,7 +84,7 @@ const Game = () => {
       });
 
       if (res.data.message) {
-        navigate("/statistic", { state: { sessionId, telegramId, username } });
+        navigate("/statistic", { state: { sessionId, telegramId, username,inline_message_id,message_id } });
         return;
       }
 
@@ -107,7 +109,7 @@ const Game = () => {
       const left = Math.max(0, deadline - Date.now());
       setTimeLeft(left);
       if (left <= 0) {
-        navigate("/statistic", { state: { sessionId, telegramId, username } });
+        navigate("/statistic", { state: { sessionId, telegramId, username,inline_message_id,message_id } });
       }
     };
 

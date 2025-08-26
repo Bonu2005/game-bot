@@ -14,9 +14,11 @@ const Start = () => {
     username?: string;
     sessionId?: string;
     chatId?: string;
+    inline_message_id:string,
+    message_id:string
   } || {};
 
-  const { telegramId, username, chatId: initialChatId } = state;
+  const { telegramId, username, chatId: initialChatId,inline_message_id,message_id } = state;
 
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(state.sessionId);
   const [currentChatId, setCurrentChatId] = useState<string | undefined>(initialChatId);
@@ -89,6 +91,8 @@ const Start = () => {
           username,
           sessionId: currentSessionId,
           chatId: currentChatId,
+          inline_message_id,
+          message_id
         }}
         className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-[#FFA500] shadow-md"
       >

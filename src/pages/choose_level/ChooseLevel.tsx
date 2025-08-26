@@ -26,10 +26,11 @@ const ChooseLevel = () => {
     telegramId?: number;
     username?: string;
     chatId?: string,
-    
+    inline_message_id: string,
+    message_id: string
   };
 
-  const { sessionId, telegramId, username,chatId } = state || {};
+  const { sessionId, telegramId, username, chatId,inline_message_id,message_id } = state || {};
 
   const handleChoose = async (levelId: number) => {
     if (!sessionId || !telegramId) {
@@ -47,7 +48,8 @@ const ChooseLevel = () => {
 
       // переходим к игре
       navigate("/game", {
-        state: { sessionId, levelId, telegramId, username,chatId },
+        state: { sessionId, levelId, telegramId, username, chatId , inline_message_id,
+            message_id},
       });
     } catch (err) {
       console.error("Ошибка при выборе уровня:", err);
