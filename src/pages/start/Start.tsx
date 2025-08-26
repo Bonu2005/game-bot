@@ -36,7 +36,7 @@ console.log(telegramId,username,inline_message_id,message_id);
         telegramId,
         username,
         chatId: groupChatId,
-      });
+      }); 
 
       const newSessionId = res.data.session_id;
       setCurrentSessionId(newSessionId);

@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 
-type Player = {
-  place: number;
-  username: string;
-  score: number;
-  level?: string;
-};
+// type Player = {
+//   place: number;
+//   username: string;
+//   score: number;
+//   level?: string;
+// };
 
 const Statistic = () => {
 
