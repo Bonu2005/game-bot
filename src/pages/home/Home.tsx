@@ -34,7 +34,7 @@ const Home = () => {
 
         console.log("Response data:", res.data);
         setSession(res.data.session_id);
-        alert(JSON.stringify(res)); // показывает данные в окне WebApp
+        alert(JSON.stringify(res.data)); // показывает данные в окне WebApp
 
         // Переход на страницу игры
         navigate("/start", {
