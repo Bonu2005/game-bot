@@ -52,7 +52,7 @@ const Home = () => {
     };
 
     startGame();
-  }, [navigate]);
+  }, [navigate,sessionId,username,telegramId]);
 
 
   return (
