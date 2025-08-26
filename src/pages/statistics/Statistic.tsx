@@ -22,24 +22,20 @@ const Statistic = () => {
     message_id: string
   };
   const [loading, setLoading] = useState(true);
+  console.log(state.telegramId);
 
   // 📌 Сразу при заходе в статистику шлём сообщение в чат
   useEffect(() => {
     const sendMessageToChat = async () => {
       try {
-        await axios.post(
-          "https://telsot.uz/game/result",
-          {},
-          {
-            params: {
-              score: 8,
-              chatId: state.chatId,
-              userId: state.telegramId,
-              messageId: state.message_id,
-              inline_messageId: state.inline_message_id,
-            },
-          }
-        );
+        await axios.post("https://telsot.uz/game/result", {
+          score: 8,
+          chatId: state.chatId,
+          userId: state.telegramId,
+          messageId: state.message_id,
+          inline_messageId: state.inline_message_id,
+        });
+
 
         console.log(state.chatId, state.inline_message_id);
       } catch (err) {
