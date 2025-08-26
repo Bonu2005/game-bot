@@ -23,7 +23,6 @@ const Leaderboard = () => {
 
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "level">("all");
   const handlePlayAgain = async () => {
     try {
       const { data: newSession } = await axios.post(
@@ -54,7 +53,7 @@ const Leaderboard = () => {
         const { data: session } = await axios.get(
           `https://telsot.uz/game/by/${state.sessionId}`
         );
-console.log(session);
+        console.log(session);
 
         // 2. Шлём результат на бек
         await axios.post("https://telsot.uz/game/result", {
@@ -86,26 +85,8 @@ console.log(session);
   return (
     <div className="text-white pt-8 pb-6 px-4 flex flex-col items-center">
       <h2 className="text-[20px] font-bold text-center mb-3">
-        Leaders board {state.sessionId}
+        Leaders board
       </h2>
-
-      {/* 🔘 Tabs All / Level */}
-      <div className="flex gap-2 mb-4">
-        <button
-          onClick={() => setFilter("all")}
-          className={`px-4 py-1 rounded-full ${filter === "all" ? "bg-green-600" : "bg-gray-700"
-            }`}
-        >
-          All
-        </button>
-        <button
-          onClick={() => setFilter("level")}
-          className={`px-4 py-1 rounded-full ${filter === "level" ? "bg-green-600" : "bg-gray-700"
-            }`}
-        >
-          Level {state.levelId}
-        </button>
-      </div>
 
       {/* 🏆 Players */}
       <div className="w-full max-w-md">

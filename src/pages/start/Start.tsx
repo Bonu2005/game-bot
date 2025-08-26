@@ -18,11 +18,11 @@ const Start = () => {
     message_id:string
   } || {};
 
-  const { telegramId, username, chatId: initialChatId,inline_message_id,message_id } = state;
+  const { telegramId, username,inline_message_id,message_id } = state;
 console.log(telegramId,username,inline_message_id,message_id);
 
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(state.sessionId);
-  const [currentChatId, setCurrentChatId] = useState<string | undefined>(initialChatId);
+ 
 
   const handleInvite = async () => {
     if (!telegramId || !username) {
@@ -30,19 +30,19 @@ console.log(telegramId,username,inline_message_id,message_id);
     }
 
     try {
-      const groupChatId = currentChatId ?? `game_${telegramId}`;
+   
 
       const res = await axios.post("https://telsot.uz/game/start", {
         telegramId,
         username,
-        chatId: groupChatId,
+        chatId: null,
       }); 
 
       const newSessionId = res.data.session_id;
       setCurrentSessionId(newSessionId);
-      setCurrentChatId(groupChatId);
+   
 
-      const gameUrl = `https://t.me/WordEngUz_bot?game=english&chatId=${groupChatId}`;
+      const gameUrl = `https://t.me/WordEngUz_bot?game=english`;
       const shareText = `Hey! Join me in Word Quiz! 🕹️`;
 
       const webShareLink = `https://t.me/share/url?url=${encodeURIComponent(
@@ -90,7 +90,7 @@ console.log(telegramId,username,inline_message_id,message_id);
           telegramId,
           username,
           sessionId: currentSessionId,
-          chatId: currentChatId,
+          chatId: null,
           inline_message_id,
           message_id
         }}
