@@ -51,7 +51,7 @@ const Home = () => {
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="mb-[140px]">
-        <p>{sessionId}</p>
+        <p className="bg-amber-50">"sessionId:"{sessionId}</p>
         <img src={logo} alt="logo" />
       </div>
       <img src={loader} alt="loader" />
