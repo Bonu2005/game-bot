@@ -18,8 +18,11 @@ const Start = () => {
   const chatId = params.get("chatId") || null;
   const inline_message_id = params.get("inline_message_id") || "";
   const message_id = params.get("message_id") || "";
-
+  
   const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(sessionIdParam);
+
+  console.log(sessionIdParam);
+  
 
   console.log(telegramId, username, inline_message_id, message_id);
 
@@ -71,7 +74,7 @@ const Start = () => {
 
       {/* Play */}
       <Link
-        to={`/chooseLevel?telegramId=${telegramId}&username=${username}&sessionId=${currentSessionId}&chatId=${chatId}&inline_message_id=${inline_message_id}&message_id=${message_id}`}
+        to={`/chooseLevel?telegramId=${telegramId}&username=${username}&sessionId=${sessionIdParam}&chatId=${chatId}&inline_message_id=${inline_message_id}&message_id=${message_id}`}
         className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-[#FFA500] shadow-md"
       >
         <img src={play} alt="Play" className="w-6 h-6 mr-2" />
