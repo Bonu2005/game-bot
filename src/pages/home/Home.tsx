@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -12,26 +12,35 @@ type InitParams = {
   inline_message_id?: string;
 };
 
-const API_URL = "https://telsot.uz/game"; // 👈 сюда твой бэкенд
+const API_URL = "https://telsot.uz/game";
 
 const Home = () => {
   const ip: InitParams = (window as any).TelegramGameProxy?.initParams || {};
   const navigate = useNavigate();
+
+  // 👉 захватываем один раз и больше не трогаем
   const params = new URLSearchParams(window.location.search);
+
   const telegramId = ip.user?.id || params.get("user_id");
-  const username = ip.user?.username || ip.user?.username || params.get("username");
+  const username = ip.user?.username || params.get("username");
   const chatId = ip.chat?.id || params.get("chat_id");
-  const inline_message_id = ip.inline_message_id|| params.get("inline_message_id");
+  const inline_message_id = ip.inline_message_id || params.get("inline_message_id");
   const message_id = ip.chat_instance || params.get("message_id");
-  const [sessionId,setSessionId] = useState(null)
-  console.log(params);
-  
-  console.log({"telegramId":telegramId,"username":username,"inline_message_id":inline_message_id,"message_id":message_id});
-  
+
+  console.log({
+    telegramId,
+    username,
+    inline_message_id,
+    message_id,
+  });
 
   useEffect(() => {
     const startGame = async () => {
       try {
+        if (!telegramId) {
+          console.error("Нет telegramId, не могу запустить игру");
+          return;
+        }
 
         const res = await axios.post(`${API_URL}/start`, {
           telegramId,
@@ -39,9 +48,6 @@ const Home = () => {
           chatId,
         });
 
-       
-        
-       setSessionId(res.data.session_id)
         navigate("/start", {
           state: {
             telegramId,
@@ -49,21 +55,18 @@ const Home = () => {
             chatId,
             sessionId: res.data.session_id,
             inline_message_id,
-            message_id
+            message_id,
           },
           replace: true,
         });
-       
-
       } catch (err) {
         console.error("Ошибка при старте игры:", err);
-
       }
     };
 
     startGame();
-  }, []);
-
+    // 👇 не добавляем telegramId в зависимости, иначе будет гонка
+  }, []); 
 
   return (
     <div className="flex flex-col items-center justify-center">
