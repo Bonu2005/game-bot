@@ -10,6 +10,8 @@ const Start = () => {
 
   // 👉 берем параметры из URL
   const params = new URLSearchParams(location.search);
+  console.log(params);
+  
   const telegramId = params.get("telegramId") || undefined;
   const username = params.get("username") || undefined;
   const sessionIdParam = params.get("sessionId") || undefined;

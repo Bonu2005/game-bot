@@ -47,6 +47,7 @@ const Home = () => {
           username,
           chatId,
         });
+console.log(telegramId,username,res.data.session_id);
 
  navigate(`/start?telegramId=${telegramId}&username=${username}&sessionId=${res.data.session_id}&chatId=${chatId ?? ""}&inline_message_id=${inline_message_id}&message_id=${message_id}`);
 
