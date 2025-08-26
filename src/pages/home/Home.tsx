@@ -34,6 +34,7 @@ const Home = () => {
 
         console.log("Response data:", res.data);
         setSession(res.data.session_id);
+        alert(JSON.stringify(res)); // показывает данные в окне WebApp
 
         // Переход на страницу игры
         navigate("/start", {
@@ -47,12 +48,12 @@ const Home = () => {
         });
       } catch (err) {
         console.error("Ошибка при старте игры:", err);
-       
+
       }
     };
 
     startGame();
-  }, [navigate,sessionId,username,telegramId]);
+  }, [navigate, sessionId, username, telegramId]);
 
 
   return (
