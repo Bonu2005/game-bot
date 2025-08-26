@@ -62,7 +62,7 @@ const Home = () => {
     };
 
     startGame();
-  }, [navigate, sessionId, username, telegramId]);
+  }, []);
 
 
   return (
