@@ -54,6 +54,7 @@ const Leaderboard = () => {
         const { data: session } = await axios.get(
           `https://telsot.uz/game/by/${state.sessionId}`
         );
+console.log(session);
 
         // 2. Шлём результат на бек
         await axios.post("https://telsot.uz/game/result", {
