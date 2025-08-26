@@ -51,7 +51,7 @@ const Home = () => {
     };
 
     startGame();
-  }, [navigate]);
+  }, [navigate,sessionId,telegramId,username,chatId]);
 
 
   return (
