@@ -34,11 +34,11 @@ const Home = () => {
 
         });
 
-        const { session_id } = res.data;
-        setSession(session_id)
+       
+        setSession(res.data)
 
         navigate("/start", {
-          state: { telegramId, username, sessionId: session_id, chatId },
+          state: { telegramId, username, chatId },
         });
       } catch (err) {
         console.error("Ошибка при старте игры:", err);
