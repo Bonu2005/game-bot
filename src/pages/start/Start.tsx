@@ -19,7 +19,6 @@ const Start = () => {
   const inline_message_id = params.get("inline_message_id") || "";
   const message_id = params.get("message_id") || "";
   
-  const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(sessionIdParam);
 
   console.log(sessionIdParam);
   
@@ -30,15 +29,6 @@ const Start = () => {
     if (!telegramId || !username) return;
 
     try {
-      const res = await axios.post("https://telsot.uz/game/start", {
-        telegramId,
-        username,
-        chatId: null,
-      });
-
-      const newSessionId = res.data.session_id;
-      setCurrentSessionId(newSessionId);
-
       const gameUrl = `https://t.me/WordEngUz_bot?game=english`;
       const shareText = `Hey! Join me in Word Quiz! 🕹️`;
 
