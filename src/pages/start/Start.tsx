@@ -4,43 +4,35 @@ import axios from "axios";
 import image3 from "../../assets/imgs/image 3.svg";
 import shareplay from "../../assets/imgs/shareplay.svg";
 import play from "../../assets/imgs/play.circle.fill.svg";
-import { useTelegram } from "../../hooks/UseTelegram";
 
 const Start = () => {
-  const { userId } = useTelegram();
   const location = useLocation();
-  const state = location.state as {
-    telegramId?: string;
-    username?: string;
-    sessionId?: string;
-    chatId?: string;
-    inline_message_id:string,
-    message_id:string
-  } || {};
 
-  const { telegramId, username,inline_message_id,message_id } = state;
-console.log(telegramId,username,inline_message_id,message_id);
+  // 👉 берем параметры из URL
+  const params = new URLSearchParams(location.search);
+  const telegramId = params.get("telegramId") || undefined;
+  const username = params.get("username") || undefined;
+  const sessionIdParam = params.get("sessionId") || undefined;
+  const chatId = params.get("chatId") || null;
+  const inline_message_id = params.get("inline_message_id") || "";
+  const message_id = params.get("message_id") || "";
 
-  const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(state.sessionId);
- 
+  const [currentSessionId, setCurrentSessionId] = useState<string | undefined>(sessionIdParam);
+
+  console.log(telegramId, username, inline_message_id, message_id);
 
   const handleInvite = async () => {
-    if (!telegramId || !username) {
-      return;
-    }
+    if (!telegramId || !username) return;
 
     try {
-   
-
       const res = await axios.post("https://telsot.uz/game/start", {
         telegramId,
         username,
         chatId: null,
-      }); 
+      });
 
       const newSessionId = res.data.session_id;
       setCurrentSessionId(newSessionId);
-   
 
       const gameUrl = `https://t.me/WordEngUz_bot?game=english`;
       const shareText = `Hey! Join me in Word Quiz! 🕹️`;
@@ -50,11 +42,7 @@ console.log(telegramId,username,inline_message_id,message_id);
       )}&text=${encodeURIComponent(shareText)}`;
 
       if (navigator.share) {
-        await navigator.share({
-          title: "Word Quiz",
-          text: shareText,
-          url: gameUrl,
-        });
+        await navigator.share({ title: "Word Quiz", text: shareText, url: gameUrl });
       } else {
         window.open(webShareLink, "_blank");
       }
@@ -66,11 +54,7 @@ console.log(telegramId,username,inline_message_id,message_id);
 
   return (
     <div className="flex flex-col items-center justify-center px-6">
-      <h1 className="text-white font-bold text-[24px] mb-6">
-        Word Quiz {userId}
-      </h1>
-
-
+      <h1 className="text-white font-bold text-[24px] mb-6">Word Quiz</h1>
 
       <img src={image3} alt="Quiz" className="w-[220px] h-auto mb-10" />
 
@@ -85,15 +69,7 @@ console.log(telegramId,username,inline_message_id,message_id);
 
       {/* Play */}
       <Link
-        to="/chooseLevel"
-        state={{
-          telegramId,
-          username,
-          sessionId: currentSessionId,
-          chatId: null,
-          inline_message_id,
-          message_id
-        }}
+        to={`/chooseLevel?telegramId=${telegramId}&username=${username}&sessionId=${currentSessionId}&chatId=${chatId}&inline_message_id=${inline_message_id}&message_id=${message_id}`}
         className="flex items-center justify-center w-full max-w-[320px] h-[52px] rounded-full bg-[#FFA500] shadow-md"
       >
         <img src={play} alt="Play" className="w-6 h-6 mr-2" />

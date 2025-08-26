@@ -48,17 +48,8 @@ const Home = () => {
           chatId,
         });
 
-        navigate("/start", {
-          state: {
-            telegramId,
-            username,
-            chatId,
-            sessionId: res.data.session_id,
-            inline_message_id,
-            message_id,
-          },
-          replace: true,
-        });
+ navigate(`/start?telegramId=${telegramId}&username=${username}&sessionId=${res.data.session_id}&chatId=${chatId ?? ""}&inline_message_id=${inline_message_id}&message_id=${message_id}`);
+
       } catch (err) {
         console.error("Ошибка при старте игры:", err);
       }
