@@ -21,7 +21,7 @@ const Home = () => {
   const telegramId = ip.user?.id || params.get("user_id");
   const username = ip.user?.username || ip.user?.username || params.get("username");
   const chatId = ip.chat?.id || params.get("chat_id");
-  const [sessionId, setSession] = useState(null)
+  const [sessionId, setSession] = useState("")
 
   useEffect(() => {
     const startGame = async () => {
