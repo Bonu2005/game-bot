@@ -10,16 +10,16 @@ type Player = {
 };
 
 const Statistic = () => {
-  
+
   const location = useLocation();
   const state = location.state as {
     sessionId: string;
     levelId: number;
     telegramId: number;
     username: string;
-    chatId:string,
-    inline_message_id:string,
-    message_id:string
+    chatId: string,
+    inline_message_id: string,
+    message_id: string
   };
   const [loading, setLoading] = useState(true);
 
@@ -28,13 +28,15 @@ const Statistic = () => {
     const sendMessageToChat = async () => {
       try {
         await axios.post("https://telsot.uz/game/result", {
-          score:8,
-          chatId: state.chatId,
-          userId: state.telegramId,
-          messageId:state.message_id,
-          inline_messageId: state.inline_message_id,
+          params: {
+            score: 8,
+            chatId: state.chatId,
+            userId: state.telegramId,
+            messageId: state.message_id,
+            inline_messageId: state.inline_message_id, // ⚠️ ключ должен совпадать
+          },
         });
-        console.log(state.chatId,state.inline_message_id);
+        console.log(state.chatId, state.inline_message_id);
       } catch (err) {
         console.error("Ошибка при отправке сообщения в чат:", err);
       } finally {
