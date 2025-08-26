@@ -34,7 +34,7 @@ const Home = () => {
 
       try {
         const res = await axios.post(`${API_URL}/start`, { telegramId, username, chatId });
-        setSession(res.data)
+       const {session_id} = res.data
         // Telegram.WebApp отправляем данные
         if ((window as any).Telegram?.WebApp?.sendData) {
           (window as any).Telegram.WebApp.sendData(JSON.stringify(res.data));
