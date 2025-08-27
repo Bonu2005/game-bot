@@ -112,7 +112,7 @@ const Leaderboard = () => {
           return (
             <div
               key={i}
-              className={`w-32 flex items-center justify-between px-4 py-3 rounded-xl shadow
+              className={`w-[900px] flex items-center justify-between px-4 py-3 rounded-xl shadow
       ${isFirst ? "bg-green-600 text-white" : "bg-white text-black"}`}
             >
               {/* Левая часть: медаль + имя + уровень */}
