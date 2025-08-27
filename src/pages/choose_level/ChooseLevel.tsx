@@ -73,7 +73,7 @@ const ChooseLevel = () => {
               alt={level.label}
               className="w-full h-full object-cover"
             />
-            <div className="absolute bottom-[10px] w-full text-center bg-black/40">
+            <div className="absolute bottom-[10px] w-full text-center">
               <p className="text-white text-[14px] font-semibold">
                 {level.label}
               </p>
