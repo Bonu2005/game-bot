@@ -115,31 +115,30 @@ const Leaderboard = () => {
               ${isFirst ? "bg-green-600 text-white" : "bg-white text-black"}`}
             >
               {/* Левая часть: Медаль или номер */}
-              <div className="flex items-center gap-3 flex-1">
+              {/* Левая часть: Медаль или номер */}
+              <div className="flex items-center gap-3 flex-1 min-w-0">
                 {rank <= 3 ? (
                   <img
                     src={goldMedal}
                     alt={`medal-${rank}`}
-                    className="w-8 h-8"
+                    className="w-8 h-8 shrink-0"
                   />
                 ) : (
-                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-600 font-bold">
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-600 font-bold shrink-0">
                     {rank}
                   </div>
                 )}
                 {/* Имя + уровень */}
-                <div className="flex flex-col">
+                <div className="flex flex-col flex-1 min-w-0">
                   <span
-                    className={`font-semibold ${isFirst ? "text-white" : "text-black"
+                    className={`font-semibold truncate ${isFirst ? "text-white" : "text-black"
                       }`}
                   >
                     {p.username || "Unknown"}
                   </span>
                   {level && (
                     <span
-                      className={`text-xs px-2 py-0.5 rounded-full w-fit mt-0.5 ${isFirst
-                        ? "bg-white text-green-600"
-                        : "bg-green-600 text-white"
+                      className={`text-xs px-2 py-0.5 rounded-full w-fit mt-0.5 ${isFirst ? "bg-white text-green-600" : "bg-green-600 text-white"
                         }`}
                     >
                       {level}
@@ -147,6 +146,7 @@ const Leaderboard = () => {
                   )}
                 </div>
               </div>
+
 
               {/* Правая часть: Score + coin */}
               <div className="flex items-center gap-1">
