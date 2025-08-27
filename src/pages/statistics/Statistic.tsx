@@ -77,11 +77,11 @@ const Leaderboard = () => {
     return <p className="text-white text-center mt-10">Loading...</p>;
 
   // картинки медалей (ты сама подставишь пути)
-  const medalImages: Record<number, string> = {
-    1: "../../assets/imgs/oltin.svg",
-    2: "../../assets/imgs/secondmedalSerebro.svg",
-    3: "../../assets/imgs/thirdmedal.svg",
-  };
+  // const medalImages: Record<number, string> = {
+  //   1: "../../assets/imgs/oltin.svg",
+  //   2: "../../assets/imgs/secondmedalSerebro.svg",
+  //   3: "../../assets/imgs/thirdmedal.svg",
+  // };
 
   const getLevelLabel = (level?: number | null) => {
     switch (level) {
