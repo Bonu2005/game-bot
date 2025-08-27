@@ -111,11 +111,10 @@ const Leaderboard = () => {
           return (
             <div
               key={i}
-              className={`flex justify-between items-center px-4 py-3 rounded-xl shadow
-              ${isFirst ? "bg-green-600 text-white" : "bg-white text-black"}`}
+              className={`flex items-center px-4 py-3 rounded-xl shadow gap-3
+  ${isFirst ? "bg-green-600 text-white" : "bg-white text-black"}`}
             >
-              {/* Левая часть: Медаль или номер */}
-              {/* Левая часть: Медаль или номер */}
+              {/* Левая часть: Медаль или номер + имя + уровень */}
               <div className="flex items-center gap-3 flex-1 min-w-0">
                 {rank <= 3 ? (
                   <img
@@ -128,11 +127,11 @@ const Leaderboard = () => {
                     {rank}
                   </div>
                 )}
+
                 {/* Имя + уровень */}
                 <div className="flex flex-col flex-1 min-w-0">
                   <span
-                    className={`font-semibold truncate ${isFirst ? "text-white" : "text-black"
-                      }`}
+                    className={`font-semibold truncate ${isFirst ? "text-white" : "text-black"}`}
                   >
                     {p.username || "Unknown"}
                   </span>
@@ -147,16 +146,13 @@ const Leaderboard = () => {
                 </div>
               </div>
 
-
               {/* Правая часть: Score + coin */}
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-1 shrink-0">
                 <span
-                  className={`font-bold ${isFirst ? "text-white" : "text-gray-600"
-                    }`}
+                  className={`font-bold ${isFirst ? "text-white" : "text-gray-600"}`}
                 >
                   {p.score}
                 </span>
-                {/* Плейсхолдер под coin */}
                 <img
                   src={coin}
                   alt="coin"
@@ -164,6 +160,7 @@ const Leaderboard = () => {
                 />
               </div>
             </div>
+
           );
         })}
       </div>
