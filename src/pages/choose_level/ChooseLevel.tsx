@@ -74,7 +74,7 @@ const ChooseLevel = () => {
               className="w-full h-full object-cover"
             />
             <div className="absolute bottom-[10px] w-full text-center">
-              <p className="text-white text-[14px] font-semibold  rounded-md px-2 inline-block bg-amber-600">
+              <p className="text-white text-[14px] font-semibold bg-[#f0f0f0]/70 rounded-md px-2 inline-block">
                 {level.label}
               </p>
             </div>
