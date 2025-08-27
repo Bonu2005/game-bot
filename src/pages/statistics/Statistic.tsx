@@ -112,43 +112,43 @@ const Leaderboard = () => {
           return (
             <div
               key={i}
-              className={`flex items-center px-4 py-3 rounded-xl shadow gap-3
+              className={`flex items-center px-4 py-3 rounded-xl shadow
   ${isFirst ? "bg-green-600 text-white" : "bg-white text-black"}`}
             >
-              {/* Левая часть: Медаль или номер + имя + уровень */}
-              <div className="flex items-center gap-3 flex-1 min-w-0">
+              {/* Левая часть: Медаль или номер (фикс. ширина) */}
+              <div className="w-10 flex justify-center">
                 {rank <= 3 ? (
                   <img
                     src={goldMedal}
                     alt={`medal-${rank}`}
-                    className="w-8 h-8 shrink-0"
+                    className="w-8 h-8"
                   />
                 ) : (
-                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-600 font-bold shrink-0">
+                  <div className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 text-gray-600 font-bold">
                     {rank}
                   </div>
                 )}
-
-                {/* Имя + уровень */}
-                <div className="flex flex-col flex-1 min-w-0">
-                  <span
-                    className={`font-semibold truncate ${isFirst ? "text-white" : "text-black"}`}
-                  >
-                    {p.username || "Unknown"}
-                  </span>
-                  {level && (
-                    <span
-                      className={`text-xs px-2 py-0.5 rounded-full w-fit mt-0.5 ${isFirst ? "bg-white text-green-600" : "bg-green-600 text-white"
-                        }`}
-                    >
-                      {level}
-                    </span>
-                  )}
-                </div>
               </div>
 
-              {/* Правая часть: Score + coin */}
-              <div className="flex items-center gap-1 shrink-0">
+              {/* Центр: имя + уровень (растягивается) */}
+              <div className="flex flex-col flex-grow px-2">
+                <span
+                  className={`font-semibold truncate ${isFirst ? "text-white" : "text-black"}`}
+                >
+                  {p.username || "Unknown"}
+                </span>
+                {level && (
+                  <span
+                    className={`text-xs px-2 py-0.5 rounded-full w-fit mt-0.5 ${isFirst ? "bg-white text-green-600" : "bg-green-600 text-white"
+                      }`}
+                  >
+                    {level}
+                  </span>
+                )}
+              </div>
+
+              {/* Правая часть: Score + coin (фикс. ширина) */}
+              <div className="w-20 flex items-center justify-end gap-1">
                 <span
                   className={`font-bold ${isFirst ? "text-white" : "text-gray-600"}`}
                 >
@@ -161,6 +161,7 @@ const Leaderboard = () => {
                 />
               </div>
             </div>
+
 
           );
         })}
