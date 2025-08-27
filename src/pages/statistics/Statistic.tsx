@@ -4,6 +4,7 @@ import goldMedal from "../../assets/imgs/oltin.svg"
 // import secondMedal from "../../assets/imgs/secondmedalSerebro.svg"
 // import thirdmedal from "../../assets/imgs/thirdmedal.svg"
 import coin from "../../assets/imgs/Gold_Star.svg"
+import play from "../../assets/imgs/play.circle.fill (1).svg"
 import axios from "axios";
 
 type Player = {
@@ -170,7 +171,7 @@ const Leaderboard = () => {
         onClick={handlePlayAgain}
         className="mt-8 bg-[#FF9F1C] text-white font-bold px-6 py-3 rounded-full flex items-center gap-2 text-lg"
       >
-        <img src="/assets/icons/replay.png" alt="replay" className="w-5 h-5" />
+        <img src={play} alt="replay" className="w-5 h-5" />
         Play again
       </button>
     </div>
