@@ -1,5 +1,9 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import goldMedal from "../../assets/imgs/oltin.svg"
+import secondMedal from "../../assets/imgs/secondmedalSerebro.svg"
+import thirdmedal from "../../assets/imgs/thirdmedal.svg"
+import coin from "../../assets/imgs/Gold_Star.svg"
 import axios from "axios";
 
 type Player = {
@@ -114,7 +118,7 @@ const Leaderboard = () => {
               <div className="flex items-center gap-3">
                 {rank <= 3 ? (
                   <img
-                    src={medalImages[rank]}
+                    src={goldMedal}
                     alt={`medal-${rank}`}
                     className="w-8 h-8"
                   />
@@ -154,7 +158,7 @@ const Leaderboard = () => {
                 </span>
                 {/* Плейсхолдер под coin */}
                 <img
-                  src="../../assets/imgs/Gold_Star.svg"
+                  src={coin}
                   alt="coin"
                   className="w-5 h-5"
                 />
