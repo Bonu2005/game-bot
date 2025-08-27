@@ -74,9 +74,9 @@ const Leaderboard = () => {
 
   // картинки медалей (ты сама подставишь пути)
   const medalImages: Record<number, string> = {
-    1: "/assets/imgs/oltin.svg",
-    2: "/assets/imgs/secondmedalSerebro.svg",
-    3: "/assets/imgs/thirdmedal.svg",
+    1: "../../assets/imgs/oltin.svg",
+    2: "../../assets/imgs/secondmedalSerebro.svg",
+    3: "../../assets/imgs/thirdmedal.svg",
   };
 
   const getLevelLabel = (level?: number | null) => {
@@ -134,8 +134,8 @@ const Leaderboard = () => {
                   {level && (
                     <span
                       className={`text-xs px-2 py-0.5 rounded-full w-fit mt-0.5 ${isFirst
-                          ? "bg-white text-green-600"
-                          : "bg-green-600 text-white"
+                        ? "bg-white text-green-600"
+                        : "bg-green-600 text-white"
                         }`}
                     >
                       {level}
@@ -154,7 +154,7 @@ const Leaderboard = () => {
                 </span>
                 {/* Плейсхолдер под coin */}
                 <img
-                  src="/assets/icons/coin.png"
+                  src="../../assets/imgs/Gold_Star.svg"
                   alt="coin"
                   className="w-5 h-5"
                 />
