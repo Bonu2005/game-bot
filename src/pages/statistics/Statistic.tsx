@@ -116,7 +116,7 @@ const Leaderboard = () => {
   ${isFirst ? "bg-green-600 text-white" : "bg-white text-black"}`}
             >
               {/* Левая часть: Медаль или номер (фикс. ширина) */}
-              <div className="w-32 flex justify-center">
+              <div className="w-32 mx-auto">
                 {rank <= 3 ? (
                   <img
                     src={goldMedal}
