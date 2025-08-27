@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import goldMedal from "../../assets/imgs/oltin.svg"
-import secondMedal from "../../assets/imgs/secondmedalSerebro.svg"
-import thirdmedal from "../../assets/imgs/thirdmedal.svg"
+// import secondMedal from "../../assets/imgs/secondmedalSerebro.svg"
+// import thirdmedal from "../../assets/imgs/thirdmedal.svg"
 import coin from "../../assets/imgs/Gold_Star.svg"
 import axios from "axios";
 
